@@ -1,20 +1,14 @@
 #include <keyboard.h>
-
+#include <naiveConsole.h>
 #include <stdint.h>
 
-// No hay carácter imprimible
-#define KC_NONE   0
 
-// Teclas no imprimibles
-#define KC_ENTER  '\n'
-#define KC_BACKSP '\b'
-#define KC_TAB    '\t'
-#define KC_ESC    0x1B
-#define KC_SPACE  ' '
+// Variables de estado del teclado
+static uint8_t caps_lock = 0;
+static uint8_t shift_pressed = 0;
 
-
-// Mapeo del Scan Code Set 1 a caracteres 
-static const char scancode1_to_char[256] = {
+// Mapeo de scancode a caracteres minúsculas
+static const char scancode1_to_char[SCANCODE_MAP_SIZE] = {
     [0x01] = KC_ESC,
     [0x02] = '1',
     [0x03] = '2',
@@ -68,11 +62,11 @@ static const char scancode1_to_char[256] = {
     [0x33] = ',',
     [0x34] = '.',
     [0x35] = '/',
-    [0x36] = KC_NONE,   
+    [0x36] = KC_NONE,    // Right Shift
     [0x37] = '*',       
-    [0x38] = KC_NONE,    
+    [0x38] = KC_NONE,    // Alt
     [0x39] = KC_SPACE,
-    [0x3A] = KC_NONE,    
+    [0x3A] = KC_NONE,    // Caps Lock
     [0x3B] = KC_NONE, [0x3C] = KC_NONE, [0x3D] = KC_NONE, [0x3E] = KC_NONE,
     [0x3F] = KC_NONE, [0x40] = KC_NONE, [0x41] = KC_NONE, [0x42] = KC_NONE,
     [0x43] = KC_NONE, [0x44] = KC_NONE, [0x45] = KC_NONE, [0x46] = KC_NONE,
@@ -83,17 +77,74 @@ static const char scancode1_to_char[256] = {
     [0x58] = KC_NONE,    // F12
 };
 
-char scancode1_to_key(uint8_t scancode) {
-    return scancode1_to_char[scancode];
+// Mapeo de caracteres con shift presionado
+static const char shift_map[SCANCODE_MAP_SIZE] = {
+    ['1'] = '!', ['2'] = '@', ['3'] = '#', ['4'] = '$', ['5'] = '%',
+    ['6'] = '^', ['7'] = '&', ['8'] = '*', ['9'] = '(', ['0'] = ')',
+    ['-'] = '_', ['='] = '+', ['['] = '{', [']'] = '}', ['\\'] = '|',
+    [';'] = ':', ['\''] = '"', [','] = '<', ['.'] = '>', ['/'] = '?',
+    ['`'] = '~'
+};
+
+extern uint8_t getKey();
+
+// Lee un scancode del puerto de teclado
+static uint8_t get_scancode() {
+    return getKey();
 }
 
-int getKey();
+// Convierte un scancode a su carácter correspondiente
+static char scancode_to_char(uint8_t scancode) {
+    char c = scancode1_to_char[scancode];
+    
+    // Si es una letra
+    if (c >= 'a' && c <= 'z') {
+        // Aplicar mayúsculas si corresponde
+        if ((shift_pressed && !caps_lock) || (!shift_pressed && caps_lock)) {
+            c = c - 'a' + 'A';
+        }
+    }
+    // Si es otro carácter y shift está presionado
+    else if (shift_pressed && shift_map[(unsigned char)c]) {
+        c = shift_map[(unsigned char)c];
+    }
+    
+    return c;
+}
 
+// Maneja la interrupción de teclado
 void keyboard_handler() {
-    unsigned char scancode = getKey();
-
-    scancode=getKey();
-	int teclahex=translate(scancode);
-	if (teclahex >= 'a' && teclahex <= 'z' || teclahex == ' ')
-		ncPrintChar(teclahex);
+    uint8_t scancode = get_scancode();
+    
+    // Verifica si es una tecla liberada
+    if (scancode >= UNPRESSED_BIT) {
+        scancode = scancode - UNPRESSED_BIT;  // Obtiene el scancode original
+        
+        // Liberación de shift
+        if (scancode == LEFT_SHIFT || scancode == RIGHT_SHIFT) {
+            shift_pressed = 0;
+        }
+        return;
+    }
+    
+    // Maneja las teclas de control
+    switch (scancode) {
+        case CAPS_LOCK:
+            caps_lock = !caps_lock;
+            return;
+        case LEFT_SHIFT:
+        case RIGHT_SHIFT:
+            shift_pressed = 1;
+            return;
+        default:
+            break;
+    }
+    
+    // Convierte el scancode a carácter
+    char c = scancode_to_char(scancode);
+    
+    // Si es un carácter válido, lo imprime
+    if (c != KC_NONE) {
+        ncPrintChar(c);
+    }
 }
