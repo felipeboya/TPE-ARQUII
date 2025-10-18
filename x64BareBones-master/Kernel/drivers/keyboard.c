@@ -2,7 +2,6 @@
 #include <naiveConsole.h>
 #include <stdint.h>
 
-
 // Variables de estado del teclado
 static uint8_t caps_lock = 0;
 static uint8_t shift_pressed = 0;
@@ -71,7 +70,7 @@ static const char scancode1_to_char[SCANCODE_MAP_SIZE] = {
     [0x3F] = KC_NONE, [0x40] = KC_NONE, [0x41] = KC_NONE, [0x42] = KC_NONE,
     [0x43] = KC_NONE, [0x44] = KC_NONE, [0x45] = KC_NONE, [0x46] = KC_NONE,
     [0x47] = '7', [0x48] = '8', [0x49] = '9', [0x4A] = '-', [0x4B] = '4',
-    [0x4C] = '5', [0x4D] = '6', [0x4E] = '+', [0x4F] = '1', [0x50] = '2',
+    [0x4C] = '5', [0x4D] = '6', [0x4E] = '+', [0x4F] = '1', [0x50] = '2',   
     [0x51] = '3', [0x52] = '0', [0x53] = '.', 
     [0x57] = KC_NONE,    // F11
     [0x58] = KC_NONE,    // F12
@@ -144,7 +143,15 @@ void keyboard_handler() {
     char c = scancode_to_char(scancode);
     
     // Si es un carácter válido, lo imprime
-    if (c != KC_NONE) {
+    if ( c == KC_ENTER ){
+        ncNewline();
+    } else if(c == KC_BACKSP){
+        ncBackspace();
+    } else if(c == KC_TAB){
+        ncTab();
+    } else if (c == KC_ESC){
+        ncClear();
+    }else if (c != KC_NONE) {
         ncPrintChar(c);
-    }
+    } 
 }

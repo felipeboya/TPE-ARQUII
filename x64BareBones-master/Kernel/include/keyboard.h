@@ -1,11 +1,6 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-
-// Puertos de E/S del teclado
-#define KEYBOARD_DATA_PORT    0x60  // Puerto de datos del teclado
-#define KEYBOARD_STATUS_PORT  0x64  // Puerto de estado del teclado
-
 // Tamaño de los arrays de scancodes
 #define SCANCODE_MAP_SIZE 256
 
@@ -13,9 +8,9 @@
 #define KC_NONE   0
 
 // Teclas no imprimibles
-#define KC_ENTER  '\n'
+#define KC_ENTER  0xA
 #define KC_BACKSP '\b'
-#define KC_TAB    '\t'
+#define KC_TAB    0x9
 #define KC_ESC    0x1B
 #define KC_SPACE  ' '
 

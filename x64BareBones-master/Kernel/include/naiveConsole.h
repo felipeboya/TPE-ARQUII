@@ -6,6 +6,9 @@
 void ncPrint(const char * string);
 void ncPrintChar(char character);
 void ncNewline();
+void ncTab();
+void ncBackspace();
+void ncArrows(int arrow);
 void ncPrintDec(uint64_t value);
 void ncPrintHex(uint64_t value);
 void ncPrintBin(uint64_t value);
