@@ -1,13 +1,14 @@
 #include <video.h>
 #include <font.h>
 
-#define SCREEN_WIDTH VBE_mode_info->width
-#define SCREEN_HEIGHT VBE_mode_info->height
+#define SCREEN_WIDTH vbeModeInfo->width
+#define SCREEN_HEIGHT vbeModeInfo->height
 
 #define CHAR_BUFFER_ROWS  48         // Numero de caracteres disponibles con la fuente en 1 (en x).
 #define CHAR_BUFFER_COLS  128        // Numero de caracteres disponibles con la fuente en 1 (en y).
-#define Y_FONT_OFFSET (FONT_HEIGHT * font_size)
-#define X_FONT_OFFSET (FONT_WIDTH * font_size)
+#define SPACE_PER_TAB 4
+#define Y_FONT_OFFSET (FONT_HEIGHT * fontSize)
+#define X_FONT_OFFSET (FONT_WIDTH * fontSize)
 #define ROWS_TO_REBUFFER(rows_in_screen) (((rows_in_screen)/(2))+1)     // Hace que el reBuffer me imprima la ultima mitad de la pantalla
 
 typedef struct{
@@ -18,27 +19,27 @@ typedef struct{
 typedef struct{
     uint8_t c;			// Caracter ASCII
     uint8_t fd;			// File descriptor
-}char_buffer_type;
+}charBufferType;
 
-static VBEInfoPtr VBE_mode_info = (VBEInfoPtr) 0x0000000000005C00;
-extern uint8_t font_bitmap[4096];
-static Color background_color = {0,0,0}; 	// Color default del fondo
-static Color font_color = {255,255,255};	// Color default de la fuente
-static Color stderr_color = {255, 0,0};
-static uint64_t font_size = 1;				// Tamaño base de fuente
-static uint8_t driver_mode = TEXT_MODE;		// Habria que inicializar en VIDEO_MODE?
-static Point current_screen_point = {0,0};
-static char_buffer_type char_buffer[CHAR_BUFFER_ROWS * CHAR_BUFFER_COLS]; // Array de caracteres en pantalla
-static uint64_t buffer_index = 0;
+static vbeInfoPtr vbeModeInfo = (vbeInfoPtr) 0x0000000000005C00;
+extern uint8_t fontBitmap[4096];
+static Color backgroundColor = {0,0,0}; 	// Color default del fondo
+static Color fontColor = {255,255,255};	    // Color default de la fuente
+static Color stderrColor = {255, 0,0};
+static uint64_t fontSize = 1;				// Tamaño base de fuente
+static uint8_t driverMode = TEXT_MODE;		// Habria que inicializar en VIDEO_MODE?
+static Point currentScreenPoint = {0,0};
+static charBufferType charBuffer[CHAR_BUFFER_ROWS * CHAR_BUFFER_COLS]; // Array de caracteres en pantalla
+static uint64_t bufferIndex = 0;
 
-static uint8_t override_mode = 0;
-static uint64_t char_buffer_rows_zoomed = CHAR_BUFFER_ROWS;
-static uint64_t char_buffer_cols_zoomed = CHAR_BUFFER_COLS;
+static uint8_t overrideMode = 0;
+static uint64_t charBufferRowsZoomed = CHAR_BUFFER_ROWS;
+static uint64_t charBufferColsZoomed = CHAR_BUFFER_COLS;
 
 static uint64_t inTextMode();
 static uint64_t inVideoMode();
 static void addCharToBuffer(uint8_t c, uint8_t fd);
-static void printFont(char_buffer_type letter);
+static void printFont(charBufferType letter);
 static void clearScreen();
 static void newLinePrint();
 static void newLineBuff();
@@ -51,14 +52,14 @@ static void reBufferPrint();
 static void printBuffer();
 
 int64_t putPixel(uint64_t x, uint64_t y, Color color){
-	if(x >= SCREEN_WIDTH || y>= SCREEN_HEIGHT){
+	if(x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT){
 		return ERROR;
 	}
 	if(!inVideoMode()){
 		return ERROR;
 	}
-	uint8_t * framebuffer = (uint8_t *) VBE_mode_info->framebuffer;
-	uint64_t offset = (x * ((VBE_mode_info->bpp)/8)) + (y * VBE_mode_info->pitch);
+	uint8_t * framebuffer = (uint8_t *) vbeModeInfo->framebuffer;
+	uint64_t offset = (x * ((vbeModeInfo->bpp)/8)) + (y * vbeModeInfo->pitch);
 	framebuffer[offset]     =  color.b;
 	framebuffer[offset+1]   =  color.g;
 	framebuffer[offset+2]   =  color.r;
@@ -82,7 +83,8 @@ int64_t drawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, C
 
 int64_t drawFont(uint64_t x, uint64_t y, uint8_t ch, Color color, uint64_t size) {
     if (ch < FIRST_ASCII_FONT || ch > LAST_ASCII_FONT) return -1;
-    unsigned char * glyph = fontPixelMap(ch, font_bitmap);
+    
+    unsigned char * glyph = fontPixelMap(ch, fontBitmap);
     for (uint64_t row = 0; row < FONT_HEIGHT; row++) {
         unsigned char bits = glyph[row];
         for (uint64_t col = 0; col < FONT_WIDTH; col++) {
@@ -95,7 +97,7 @@ int64_t drawFont(uint64_t x, uint64_t y, uint8_t ch, Color color, uint64_t size)
 }
 
 void setFontColor(Color c){
-    font_color = c;
+    fontColor = c;
 }
 
 // Cambia el tamaño de fuente en MODO TEXTO
@@ -107,25 +109,25 @@ int64_t setFontSize(uint64_t size) {
     if (size < 0 || SCREEN_WIDTH < size * FONT_WIDTH || SCREEN_HEIGHT < size * FONT_HEIGHT) {
         return ERROR;
     }
-    if (size == font_size) {
+    if (size == fontSize) {
         return OK;
     }
-    font_size = size;
-    char_buffer_rows_zoomed = (SCREEN_HEIGHT / (font_size * FONT_HEIGHT));  // cantidad de caracteres maximos por linea
-    char_buffer_cols_zoomed = (SCREEN_WIDTH / (font_size * FONT_WIDTH));	// cantidad de caracteres maximos por columna
+    fontSize = size;
+    charBufferRowsZoomed = (SCREEN_HEIGHT / (fontSize * FONT_HEIGHT));  // cantidad de caracteres maximos por linea
+    charBufferColsZoomed = (SCREEN_WIDTH / (fontSize * FONT_WIDTH));	// cantidad de caracteres maximos por columna
     clearScreen();		// Limpia todo cuando se modifica el tamaño de fuente
     return OK;
 }
 
 int64_t colorClearScreen(Color color){
-    if(driver_mode == TEXT_MODE){
-        background_color = color;
-        current_screen_point.x = current_screen_point.y = 0;
-        buffer_index = 0;
+    if(driverMode == TEXT_MODE){
+        backgroundColor = color;
+        currentScreenPoint.x = currentScreenPoint.y = 0;
+        bufferIndex = 0;
     }
-    override_mode = 1;
+    overrideMode = 1;
     drawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, color);
-    override_mode = 0;
+    overrideMode = 0;
     return OK;
 }
 
@@ -133,11 +135,11 @@ int64_t setMode(uint64_t mode, Color c){
     if(!(mode == TEXT_MODE || mode == VIDEO_MODE) ){
         return ERROR;
     }
-    background_color = c;
-    if(mode == driver_mode){
+    backgroundColor = c;
+    if(mode == driverMode){
         return OK;
     }
-    driver_mode = mode;
+    driverMode = mode;
 
     if(mode == TEXT_MODE){
         printBuffer();			// Printea el buffer cuando vuelve a modo texto
@@ -170,7 +172,7 @@ int64_t textWrite(uint64_t fd, const char * buffer, int64_t amount){
                 break;
             default:
                 if(buffer[i] >= FIRST_ASCII_FONT && buffer[i] <=LAST_ASCII_FONT){
-                    char_buffer_type c = {buffer[i], fd};
+                    charBufferType c = {buffer[i], fd};
                     addCharToBuffer(buffer[i], fd);
                     printFont(c);
                 }
@@ -183,15 +185,14 @@ int64_t textWrite(uint64_t fd, const char * buffer, int64_t amount){
 
 //Funciones STATIC:
 static uint64_t inTextMode(){
-    return ((driver_mode == TEXT_MODE) || override_mode);
+    return ((driverMode == TEXT_MODE) || overrideMode);
 }
 static uint64_t inVideoMode(){
-    return ((driver_mode == VIDEO_MODE) || override_mode);
+    return ((driverMode == VIDEO_MODE) || overrideMode);
 }
 
-#define SPACE_PER_TAB 1
 static void tabulator(){
-    char_buffer_type c = {' ', STDOUT};
+    charBufferType c = {' ', STDOUT};
     for(int i = 0; i < SPACE_PER_TAB ; i++){
         addCharToBuffer(' ', STDOUT);
         printFont(c);
@@ -199,50 +200,50 @@ static void tabulator(){
 }
 
 static void addCharToBuffer(uint8_t c, uint8_t fd) {
-    if (buffer_index  >= char_buffer_rows_zoomed*char_buffer_cols_zoomed) {
+    if (bufferIndex  >= charBufferRowsZoomed*charBufferColsZoomed) {
         reBufferPrint();
     }
-    char_buffer_type aux = {c, fd};
-    char_buffer[buffer_index] = aux;
-    buffer_index ++;
+    charBufferType aux = {c, fd};
+    charBuffer[bufferIndex] = aux;
+    bufferIndex ++;
 }
 
-static void printFont(char_buffer_type letter){
+static void printFont(charBufferType letter){
 
-    if (current_screen_point.x+FONT_WIDTH*font_size - FONT_WIDTH >= SCREEN_WIDTH) {
-        current_screen_point.y += FONT_HEIGHT*font_size;
-        current_screen_point.x = 0;
+    if (currentScreenPoint.x+FONT_WIDTH*fontSize - FONT_WIDTH >= SCREEN_WIDTH) {
+        currentScreenPoint.y += FONT_HEIGHT*fontSize;
+        currentScreenPoint.x = 0;
     }
-    if(current_screen_point.y + FONT_HEIGHT*font_size - FONT_HEIGHT >= SCREEN_HEIGHT){
+    if(currentScreenPoint.y + FONT_HEIGHT*fontSize - FONT_HEIGHT >= SCREEN_HEIGHT){
         reBufferPrint();
     }
-    override_mode=1;
+    overrideMode=1;
     Color col;
     if(letter.fd == STDOUT){
-        col = font_color;
+        col = fontColor;
     }else{
-        col = stderr_color;
+        col = stderrColor;
     }
-    drawFont(current_screen_point.x, current_screen_point.y, letter.c, col, font_size);
-    override_mode=0;
-    current_screen_point.x+=FONT_WIDTH*font_size;
+    drawFont(currentScreenPoint.x, currentScreenPoint.y, letter.c, col, fontSize);
+    overrideMode=0;
+    currentScreenPoint.x+=FONT_WIDTH*fontSize;
 }
 
 static void clearScreen() {
-    colorClearScreen(background_color);
+    colorClearScreen(backgroundColor);
 }
 
 static void newLinePrint(){
-    current_screen_point.x = 0;
-    current_screen_point.y = current_screen_point.y+ FONT_HEIGHT * font_size;
-    if(current_screen_point.y + FONT_HEIGHT * font_size - FONT_HEIGHT >= SCREEN_HEIGHT){
+    currentScreenPoint.x = 0;
+    currentScreenPoint.y = currentScreenPoint.y+ FONT_HEIGHT * fontSize;
+    if(currentScreenPoint.y + FONT_HEIGHT * fontSize - FONT_HEIGHT >= SCREEN_HEIGHT){
         reBufferPrint();
     }
 }
 
 static void newLineBuff(){
-    int remaining_on_row = char_buffer_cols_zoomed - (buffer_index % char_buffer_cols_zoomed);
-    for(int i=0 ; i<remaining_on_row; i++){
+    int remainingOnRow = charBufferColsZoomed - (bufferIndex % charBufferColsZoomed);
+    for(int i=0 ; i<remainingOnRow; i++){
         addCharToBuffer(' ', STDOUT);
     }
 }
@@ -253,25 +254,25 @@ static void newLine(){
 }
 
 static void backSpacePrint(){
-    if(current_screen_point.x == 0 && current_screen_point.y == 0){
+    if(currentScreenPoint.x == 0 && currentScreenPoint.y == 0){
         return;
     }
-    if(current_screen_point.x == 0){
+    if(currentScreenPoint.x == 0){
 
-        current_screen_point.y -= font_size * FONT_HEIGHT;  // y es dif a 0
-        current_screen_point.x = SCREEN_WIDTH - font_size * FONT_WIDTH;
+        currentScreenPoint.y -= fontSize * FONT_HEIGHT;  // y es dif a 0
+        currentScreenPoint.x = SCREEN_WIDTH - fontSize * FONT_WIDTH;
     }else{
-        current_screen_point.x -= font_size * FONT_WIDTH;
+        currentScreenPoint.x -= fontSize * FONT_WIDTH;
     }
-    override_mode=1;
-    drawRectangle(current_screen_point.x , current_screen_point.y, X_FONT_OFFSET, FONT_HEIGHT*font_size, background_color);
-    override_mode=0;
+    overrideMode=1;
+    drawRectangle(currentScreenPoint.x , currentScreenPoint.y, X_FONT_OFFSET, FONT_HEIGHT*fontSize, backgroundColor);
+    overrideMode=0;
 }
 
 static void backSpaceBuffer(){
-    if(buffer_index != 0){
-        char_buffer[buffer_index].c = 0;
-        char_buffer[--buffer_index].fd = STDOUT;
+    if(bufferIndex != 0){
+        charBuffer[bufferIndex].c = 0;
+        charBuffer[--bufferIndex].fd = STDOUT;
     }
 }
 
@@ -281,20 +282,20 @@ static void backSpace(){
 }
 
 static void reBufferPrint(){
-    uint64_t aux = buffer_index; // con el clear screen se setea en 0
+    uint64_t aux = bufferIndex; // con el clear screen se setea en 0
     clearScreen();
     uint64_t j = 0;
-    for(uint64_t i=char_buffer_cols_zoomed * ROWS_TO_REBUFFER(char_buffer_rows_zoomed) ; i<aux;i++, j++){
-        char_buffer[j] = char_buffer[i];
-        printFont(char_buffer[j]);
+    for(uint64_t i=charBufferColsZoomed * ROWS_TO_REBUFFER(charBufferRowsZoomed) ; i<aux;i++, j++){
+        charBuffer[j] = charBuffer[i];
+        printFont(charBuffer[j]);
     }
-    buffer_index = j;
+    bufferIndex = j;
 }
 
 static void printBuffer(){
-    uint64_t aux = buffer_index; // con clear screen se borra
+    uint64_t aux = bufferIndex; // con clear screen se borra
     clearScreen();
     for(int i = 0 ; i < aux ; i++){
-        textWrite(char_buffer[i].fd, &char_buffer[i].c, 1);
+        textWrite(charBuffer[i].fd, &charBuffer[i].c, 1);
     }
 }
