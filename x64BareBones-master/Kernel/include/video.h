@@ -70,14 +70,12 @@ typedef struct{
 typedef struct vbeModeInfoStructure * vbeInfoPtr;
 
 
-// int64_t textWwrite(uint64_t fd, const char * buffer, int64_t amount);
-// int64_t textSetFontSize(uint64_t size);
-void setFontColor(Color c);
-
+int64_t putPixel(uint64_t x, uint64_t y, Color color);
 int64_t drawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, Color color);
 int64_t drawFont(uint64_t x, uint64_t y, uint8_t ascii, Color color, uint64_t fontSize);
-int64_t putPixel(uint64_t x, uint64_t y, Color color);
-
+int64_t setFontSize(uint64_t size);
+void setFontColor(Color c);
+int64_t textWrite(uint64_t fd, const char * buffer, int64_t amount);
 // int64_t getScreenInfo(ScreenInformation * screenInformation);
 int64_t setMode(uint64_t mode, Color c);
 int64_t colorClearScreen(Color color);

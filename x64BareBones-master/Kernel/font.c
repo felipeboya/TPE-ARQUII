@@ -3480,6 +3480,7 @@ unsigned char fontBitmap[] = {
 	________,
 };
 
+// Retorna un puntero al glyph (matriz de pixeles del caracter)
 unsigned char * fontPixelMap(unsigned char c, unsigned char * bitmap) {
 	return bitmap + FONT_HEIGHT * (c-31);
 }
