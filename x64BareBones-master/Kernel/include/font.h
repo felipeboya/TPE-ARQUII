@@ -7,6 +7,7 @@ unsigned char *fontPixelMap(unsigned char c, unsigned char * bitmap);
 #define FONT_HEIGHT 16
 #define FIRST_ASCII_FONT 32
 #define LAST_ASCII_FONT 126
+#define CARET_WIDTH (FONT_WIDTH/3)
 
 #define ________ 0x00
 #define _______X 0x01
