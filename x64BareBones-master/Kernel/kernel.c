@@ -81,26 +81,33 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
-int main()
-{	
-	ncPrint("[Kernel Main]");
-	ncNewline();
-	ncPrint("  Sample code module at 0x");
-	ncPrintHex((uint64_t)sampleCodeModuleAddress);
-	ncNewline();
-	ncPrint("  Calling the sample code module returned: ");
-	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
-	ncNewline();
-	ncNewline();
+// int main()
+// {	
+// 	ncPrint("[Kernel Main]");
+// 	ncNewline();
+// 	ncPrint("  Sample code module at 0x");
+// 	ncPrintHex((uint64_t)sampleCodeModuleAddress);
+// 	ncNewline();
+// 	ncPrint("  Calling the sample code module returned: ");
+// 	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
+// 	ncNewline();
+// 	ncNewline();
 
-	ncPrint("  Sample data module at 0x");
-	ncPrintHex((uint64_t)sampleDataModuleAddress);
-	ncNewline();
-	ncPrint("  Sample data module contents: ");
-	ncPrint((char*)sampleDataModuleAddress);
-	ncNewline();
+// 	ncPrint("  Sample data module at 0x");
+// 	ncPrintHex((uint64_t)sampleDataModuleAddress);
+// 	ncNewline();
+// 	ncPrint("  Sample data module contents: ");
+// 	ncPrint((char*)sampleDataModuleAddress);
+// 	ncNewline();
 
-	ncPrint("[Finished]");
-	return 0;
+// 	ncPrint("[Finished]");
+// 	return 0;
+// }
+
+int main(){
+	load_idt();
+	while(1){
+		
+	}
 }
 

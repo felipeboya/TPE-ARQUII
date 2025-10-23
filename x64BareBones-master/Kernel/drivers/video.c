@@ -320,8 +320,6 @@ static void printBuffer(){
     }
 }
 
-//funciones con lo que tiene que ver el cursor
-
 static void drawCaret(){
     // como siempre calculamos un margen creo que nunca pasa que no nos entra el caret
     /*if (currentScreenPoint.x+CARET_WIDTH*fontSize - CARET_WIDTH >= SCREEN_WIDTH) {
@@ -349,8 +347,3 @@ static void eraseCaret(){
     }
 
 }
-
-
-
-
-

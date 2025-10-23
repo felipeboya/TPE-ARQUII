@@ -1,10 +1,66 @@
 #include <keyboard.h>
 #include <naiveConsole.h>
-#include <stdint.h>
+#include <lib.h>
 
 // Variables de estado del teclado
 static uint8_t caps_lock = 0;
 static uint8_t shift_pressed = 0;
+
+static uint8_t get_scancode();
+static const char scancode1_to_char[SCANCODE_MAP_SIZE];
+static const char shift_map[SCANCODE_MAP_SIZE];
+static char scancode_to_char(uint8_t scancode);
+
+void keyboard_handler() {
+    uint8_t scancode = get_scancode();
+    
+    // Verifica si es una tecla liberada
+    if (scancode >= UNPRESSED_BIT) {
+        scancode = scancode - UNPRESSED_BIT;  // Obtiene el scancode original
+        
+        // Liberación de shift
+        if (scancode == LEFT_SHIFT || scancode == RIGHT_SHIFT) {
+            shift_pressed = 0;
+        }
+        return;
+    }
+    
+    // Maneja las teclas de control
+    switch (scancode) {
+        case CAPS_LOCK:
+            caps_lock = !caps_lock;
+            return;
+        case LEFT_SHIFT:
+        case RIGHT_SHIFT:
+            shift_pressed = 1;
+            return;
+        default:
+            break;
+    }
+    
+    // Convierte el scancode a carácter
+    char c = scancode_to_char(scancode);
+    
+    // Si es un carácter válido, lo imprime
+    if ( c == KC_ENTER ){
+        ncNewline();
+    } else if(c == KC_BACKSP){
+        ncBackspace();
+    } else if(c == KC_TAB){
+        ncTab();
+    } else if (c == KC_ESC){
+        ncClear();
+    }else if (c != KC_NONE) {
+        ncPrintChar(c);
+    } 
+}
+
+// Funciones Estáticas 
+
+// Lee un scancode del puerto de teclado
+static uint8_t get_scancode() {
+    return getKey();
+}
 
 // Mapeo de scancode a caracteres minúsculas
 static const char scancode1_to_char[SCANCODE_MAP_SIZE] = {
@@ -85,13 +141,6 @@ static const char shift_map[SCANCODE_MAP_SIZE] = {
     ['`'] = '~'
 };
 
-extern uint8_t getKey();
-
-// Lee un scancode del puerto de teclado
-static uint8_t get_scancode() {
-    return getKey();
-}
-
 // Convierte un scancode a su carácter correspondiente
 static char scancode_to_char(uint8_t scancode) {
     char c = scancode1_to_char[scancode];
@@ -109,49 +158,4 @@ static char scancode_to_char(uint8_t scancode) {
     }
     
     return c;
-}
-
-// Maneja la interrupción de teclado
-void keyboard_handler() {
-    uint8_t scancode = get_scancode();
-    
-    // Verifica si es una tecla liberada
-    if (scancode >= UNPRESSED_BIT) {
-        scancode = scancode - UNPRESSED_BIT;  // Obtiene el scancode original
-        
-        // Liberación de shift
-        if (scancode == LEFT_SHIFT || scancode == RIGHT_SHIFT) {
-            shift_pressed = 0;
-        }
-        return;
-    }
-    
-    // Maneja las teclas de control
-    switch (scancode) {
-        case CAPS_LOCK:
-            caps_lock = !caps_lock;
-            return;
-        case LEFT_SHIFT:
-        case RIGHT_SHIFT:
-            shift_pressed = 1;
-            return;
-        default:
-            break;
-    }
-    
-    // Convierte el scancode a carácter
-    char c = scancode_to_char(scancode);
-    
-    // Si es un carácter válido, lo imprime
-    if ( c == KC_ENTER ){
-        ncNewline();
-    } else if(c == KC_BACKSP){
-        ncBackspace();
-    } else if(c == KC_TAB){
-        ncTab();
-    } else if (c == KC_ESC){
-        ncClear();
-    }else if (c != KC_NONE) {
-        ncPrintChar(c);
-    } 
 }
