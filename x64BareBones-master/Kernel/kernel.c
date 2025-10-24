@@ -5,6 +5,9 @@
 #include <naiveConsole.h>
 #include <idtLoader.h>
 
+#include <keyboard.h>
+#include <video.h>
+
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -104,10 +107,53 @@ void * initializeKernelBinary()
 // 	return 0;
 // }
 
+// IMPLEMENTACIÓN DE PRUEBA (BORRAR)
+uint64_t strlen(const char *str);
+
 int main(){
-	load_idt();
-	while(1){
-		
-	}
+    
+	// Por default arranca en modo texto, con backgroundColor negro, fontColor blanco, fontSize 1
+    
+    // Imprime el mensaje en pantalla (MODO TEXTO)
+    const char *bienvenida = "Sistema Operativo Iniciado\n";
+    textWrite(STDOUT, bienvenida, strlen(bienvenida));
+    
+    // Cargar tabla de interrupciones
+    load_idt();
+
+	// Cambiar a modo video
+	Color negro = {0, 0, 0};
+	setMode(VIDEO_MODE, negro);
+
+	// Dibujar pixel
+	Color rojo = {255, 0, 0};
+	putPixel(100, 100, rojo);
+
+	// Dibujar rectángulo
+	Color verde = {0, 255, 0};
+	drawRectangle(50, 50, 200, 100, verde);
+
+	// Dibujar texto en modo gráfico
+	Color blanco = {255, 255, 255};
+	drawFont(10, 10, 'A', blanco, 2); 
+
+	// Llama al módulo (todavia no anda porque hay que cambiar los makefile)
+    // int resultado = ((EntryPoint)sampleCodeModuleAddress)();
+
+	// Vuelve a modo texto (limpia la pantalla) y espera interrupciones
+	setMode(TEXT_MODE, negro);
+    while(1){
+        _hlt();  // Esperar interrupciones
+    }
+    
+    return 0;
 }
 
+
+uint64_t strlen(const char *str) {
+    uint64_t len = 0;
+    while (str[len] != '\0') {
+        len++;
+    }
+    return len;
+}

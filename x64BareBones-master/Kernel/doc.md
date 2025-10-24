@@ -26,8 +26,15 @@ Kernel/
 ---
 
 ## Flujo
+main
+    -> *module
+
 loader 
     -> initializeKernelBinary
+        -> loadModules
+            -> (for) loadModule
+        -> clearBSS
+        -> (ret) getStackBase
     -> main
         -> load_idt 
             -> setup_IDT_entry 
@@ -41,4 +48,17 @@ loader
                 -> int_X        
                     -> X_handler
                         -> ...
+---
+
+## Module Loader
+loadModules carga módulos en memoria.
+La función recibe dos parámetros:
+    - payloadStart: Puntero al inicio donde están los módulos en memoria
+    - targetModuleAddress: Array de direcciones donde se copiarán los módulos
+
+1. Lee cuántos módulos hay (moduleCount) usando readUint32
+2. Para cada módulo:
+   - Lee su tamaño
+   - Copia el módulo desde su ubicación original a la dirección destino usando memcpy()
+   - Avanza el puntero al siguiente módulo
 ---

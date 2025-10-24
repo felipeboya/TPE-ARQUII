@@ -28,7 +28,7 @@ static Color fontColor = {255,255,255};	    // Color default de la fuente
 static Color stderrColor = {255, 0,0};
 static Color caretColor = {0, 255, 0};      //Default color del visible cursor
 static uint64_t fontSize = 1;				// Tamaño base de fuente
-static uint8_t driverMode = TEXT_MODE;		// Habria que inicializar en VIDEO_MODE?
+static uint8_t driverMode = TEXT_MODE;		
 static Point currentScreenPoint = {0,0};
 static charBufferType charBuffer[CHAR_BUFFER_ROWS * CHAR_BUFFER_COLS]; // Array de caracteres en pantalla
 static uint64_t bufferIndex = 0;

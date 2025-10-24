@@ -1,4 +1,5 @@
 #include <keyboard.h>
+#include <video.h>
 #include <naiveConsole.h>
 #include <lib.h>
 
@@ -42,17 +43,18 @@ void keyboard_handler() {
     char c = scancode_to_char(scancode);
     
     // Si es un carácter válido, lo imprime
-    if ( c == KC_ENTER ){
-        ncNewline();
+    if (c == KC_ENTER) {
+        textWrite(STDOUT, "\n", 1);
     } else if(c == KC_BACKSP){
-        ncBackspace();
+        textWrite(STDOUT, "\b", 1);
     } else if(c == KC_TAB){
-        ncTab();
+        textWrite(STDOUT, "\t", 1);
     } else if (c == KC_ESC){
-        ncClear();
-    }else if (c != KC_NONE) {
-        ncPrintChar(c);
-    } 
+        Color black = {0, 0, 0};
+        colorClearScreen(black);
+    } else if (c != KC_NONE) {
+        textWrite(STDOUT, &c, 1);
+    }
 }
 
 // Funciones Estáticas 
