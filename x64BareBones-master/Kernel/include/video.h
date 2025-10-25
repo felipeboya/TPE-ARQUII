@@ -2,15 +2,13 @@
 #ifndef VIDEODRIVER_H
 #define VIDEODRIVER_H
 
+#include <status.h>
 
 #define TEXT_MODE 0
 #define VIDEO_MODE 1
 
 #define STDOUT 0
 #define STDERR 1
-
-#define OK 0 
-#define ERROR -1
 
 /**
  * Structure representing the VBE mode information.

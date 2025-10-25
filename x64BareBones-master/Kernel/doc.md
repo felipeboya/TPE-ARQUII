@@ -62,3 +62,9 @@ La función recibe dos parámetros:
    - Copia el módulo desde su ubicación original a la dirección destino usando memcpy()
    - Avanza el puntero al siguiente módulo
 ---
+
+## System Calls
+- idtLoader.c (entry _int80Handler)
+- interrupts.asm (implementa _int80Handler -> llama a syscallDispatcher)
+- syscalls.c (implementa syscallDispatcher -> llama a la función correspondiente segun el syscall_id)
+---

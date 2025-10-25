@@ -13,9 +13,12 @@ GLOBAL _irq03Handler
 GLOBAL _irq04Handler
 GLOBAL _irq05Handler
 
+GLOBAL _int80Handler
+
 GLOBAL _exception0Handler
 
 EXTERN irqDispatcher
+EXTERN syscallDispatcher
 EXTERN exceptionDispatcher
 
 SECTION .text
@@ -109,6 +112,8 @@ picSlaveMask:
     pop     rbp
     retn
 
+; Hardware Interrupts
+
 ;8254 Timer (Timer Tick)
 _irq00Handler:
 	irqHandlerMaster 0
@@ -133,6 +138,15 @@ _irq04Handler:
 _irq05Handler:
 	irqHandlerMaster 5
 
+; System Calls (Software Interrupts)
+
+_int80Handler:
+	pushState
+	call syscallDispatcher
+	popState
+	iretq
+
+; Exceptions
 
 ;Zero Division Exception
 _exception0Handler:
