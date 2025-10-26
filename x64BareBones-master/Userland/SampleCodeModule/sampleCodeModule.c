@@ -1,15 +1,11 @@
-/* sampleCodeModule.c */
-
-char * v = (char*)0xB8000 + 79 * 2;
+#include <library.h>
 
 static int var1 = 0;
 static int var2 = 0;
 
-
 int main() {
-	//All the following code may be removed 
-	*v = 'X';
-	*(v+1) = 0x74;
+	
+	write(0, "Si leo esto salio todo bien");
 
 	//Test if BSS is properly set up
 	if (var1 == 0 && var2 == 0)
