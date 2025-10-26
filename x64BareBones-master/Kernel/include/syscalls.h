@@ -3,9 +3,10 @@
 
 #include <stdint.h>
 
-#define SYS_WRITE 0x4
+// System Calls: https://syscalls64.paolostivanin.com/
 
-uint64_t sys_write(uint64_t fd, const char * buf, uint64_t size);
+#define SYS_WRITE 0x1
 
+uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6);
 
 #endif

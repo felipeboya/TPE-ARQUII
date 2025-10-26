@@ -64,6 +64,8 @@ La función recibe dos parámetros:
 ---
 
 ## System Calls
+[System Calls are used to call a kernel service from user land](https://wiki.osdev.org/System_Calls)
+
 - idtLoader.c (entry _int80Handler)
 - interrupts.asm (implementa _int80Handler -> llama a syscallDispatcher)
 - syscalls.c (implementa syscallDispatcher -> llama a la función correspondiente segun el syscall_id)

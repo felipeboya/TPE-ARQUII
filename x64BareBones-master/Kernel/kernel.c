@@ -89,5 +89,6 @@ void * initializeKernelBinary()
 int main(){
 	load_idt();
 
-	sys_write(0, "Hola buen dia", 13);
+	int resultado = ((EntryPoint)sampleCodeModuleAddress)();
+	return resultado;
 }

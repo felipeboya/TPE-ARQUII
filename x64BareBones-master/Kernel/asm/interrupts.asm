@@ -140,11 +140,24 @@ _irq05Handler:
 
 ; System Calls (Software Interrupts)
 
+; calling conventions: https://wiki.osdev.org/Calling_Conventions
+
 _int80Handler:
-	pushState
-	call syscallDispatcher
-	popState
-	iretq
+    pushState
+	push r9		 ; (stack) arg6
+    mov r9, r8       ; r9 = arg5
+    mov r8, r10      ; r8 = arg4
+    mov rcx, rdx     ; rcx = arg3
+    mov rdx, rsi     ; rdx = arg2
+    mov rsi, rdi     ; rsi = arg1
+    mov rdi, rax     ; rdi = syscall_id 
+
+    call syscallDispatcher
+
+	add rsp, 8		
+
+    popState
+    iretq
 
 ; Exceptions
 
