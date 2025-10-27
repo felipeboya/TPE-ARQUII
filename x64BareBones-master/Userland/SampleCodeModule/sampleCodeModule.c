@@ -5,7 +5,16 @@ static int var2 = 0;
 
 int main() {
 	
-	write(0, "Si leo esto salio todo bien");
+	char buffer[32] = {0};
+
+    write(1, "Escribe algo: ");		
+    read(0, buffer, 31);     // leer hasta 31 caracteres
+
+
+	//while(read(0, buffer, 31) != 31);   
+
+    write(1, "\nLeiste: ");
+    write(1, buffer);
 
 	//Test if BSS is properly set up
 	if (var1 == 0 && var2 == 0)

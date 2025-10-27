@@ -4,6 +4,8 @@
 // Tamaño de los arrays de scancodes
 #define SCANCODE_MAP_SIZE 256
 
+#define BUFFER_DIM 256
+
 // No hay carácter imprimible
 #define KC_NONE   0
 

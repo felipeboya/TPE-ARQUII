@@ -3,6 +3,14 @@
 #include <naiveConsole.h>
 #include <lib.h>
 
+typedef struct {
+    uint8_t keysBuffer[BUFFER_DIM];   // solo caracteres imprimibles
+    uint64_t bufferIndex;
+    uint64_t size; //sirve para algo?...
+} keyboardBuffer;
+
+static keyboardBuffer kb = {0};
+
 // Variables de estado del teclado
 static uint8_t caps_lock = 0;
 static uint8_t shift_pressed = 0;
@@ -11,50 +19,33 @@ static uint8_t get_scancode();
 static const char scancode1_to_char[SCANCODE_MAP_SIZE];
 static const char shift_map[SCANCODE_MAP_SIZE];
 static char scancode_to_char(uint8_t scancode);
+static uint8_t handleKey(uint8_t scancode);
 
 void keyboard_handler() {
     uint8_t scancode = get_scancode();
     
-    // Verifica si es una tecla liberada
-    if (scancode >= UNPRESSED_BIT) {
-        scancode = scancode - UNPRESSED_BIT;  // Obtiene el scancode original
-        
-        // Liberación de shift
-        if (scancode == LEFT_SHIFT || scancode == RIGHT_SHIFT) {
-            shift_pressed = 0;
-        }
+    if(kb.bufferIndex == BUFFER_DIM){
+        kb.bufferIndex = 0;
+    }
+
+    uint8_t c = handleKey(scancode);
+    if( c == 0 ){   
         return;
     }
-    
-    // Maneja las teclas de control
-    switch (scancode) {
-        case CAPS_LOCK:
-            caps_lock = !caps_lock;
-            return;
-        case LEFT_SHIFT:
-        case RIGHT_SHIFT:
-            shift_pressed = 1;
-            return;
-        default:
-            break;
+
+    //si es un caracter imprimible lo agrego al buffer
+    kb.keysBuffer[kb.bufferIndex++] = c;
+    kb.size++; 
+
+    return;
+}
+
+uint8_t getChar(){
+    if ( kb.size == 0 ){
+        return 0; 
     }
-    
-    // Convierte el scancode a carácter
-    char c = scancode_to_char(scancode);
-    
-    // Si es un carácter válido, lo imprime
-    if (c == KC_ENTER) {
-        textWrite(STDOUT, "\n", 1);
-    } else if(c == KC_BACKSP){
-        textWrite(STDOUT, "\b", 1);
-    } else if(c == KC_TAB){
-        textWrite(STDOUT, "\t", 1);
-    } else if (c == KC_ESC){
-        Color black = {0, 0, 0};
-        colorClearScreen(black);
-    } else if (c != KC_NONE) {
-        textWrite(STDOUT, &c, 1);
-    }
+    kb.size--;  
+    return kb.keysBuffer[kb.bufferIndex - 1]; 
 }
 
 // Funciones Estáticas 
@@ -161,3 +152,50 @@ static char scancode_to_char(uint8_t scancode) {
     
     return c;
 }
+
+//si es una tecla especial (shift, control, ...) devuelve 0
+uint8_t handleKey(uint8_t scancode){
+    // Verifica si es una tecla liberada
+    if (scancode >= UNPRESSED_BIT) {
+        scancode -= UNPRESSED_BIT;  // Obtiene el scancode original
+        
+        // Liberación de shift
+        if (kb.keysBuffer[kb.bufferIndex] == LEFT_SHIFT || kb.keysBuffer[kb.bufferIndex] == RIGHT_SHIFT) {
+            shift_pressed = 0;
+        }
+        return 0;
+    }
+    
+    // Maneja las teclas de control
+    switch (scancode) {
+        case CAPS_LOCK:
+            caps_lock = !caps_lock;
+            return 0;
+        case LEFT_SHIFT:
+        case RIGHT_SHIFT:
+            shift_pressed = 1;
+            return 0;
+        default:
+            break; 
+    }
+    
+    // Convierte el scancode a carácter
+    char c = scancode_to_char(scancode);
+    
+    // Si es un carácter válido, lo imprime
+    if (c == KC_ENTER) {
+        textWrite(STDOUT, "\n", 1);
+    } else if(c == KC_BACKSP){
+        textWrite(STDOUT, "\b", 1);
+    } else if(c == KC_TAB){
+        textWrite(STDOUT, "\t", 1);
+    } else if (c == KC_ESC){
+        Color black = {0, 0, 0};
+        colorClearScreen(black);
+    } else if (c != KC_NONE) {
+        textWrite(STDOUT, &c, 1);
+    }
+
+    return (uint8_t)OK;
+}
+
