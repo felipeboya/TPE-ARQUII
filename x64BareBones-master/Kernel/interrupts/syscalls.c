@@ -23,10 +23,10 @@ static uint64_t _read(uint64_t fd, char * buffer, uint64_t amount){
         return ERROR;
     }
 
-    uint64_t i;
-    uint64_t c;
-    for (i = 0; i < amount && (c = getChar()) != 0; i++){
-        buffer[i] = c;
+    uint64_t i = 0;
+    uint8_t c;
+    while (i < amount && (c = getChar()) != 0){
+        buffer[i++] = c;
     }
 
     return i;

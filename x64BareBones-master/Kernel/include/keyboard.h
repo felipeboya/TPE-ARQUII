@@ -10,9 +10,9 @@
 #define KC_NONE   0
 
 // Teclas no imprimibles
-#define KC_ENTER  0xA
+#define KC_ENTER  '\n'
 #define KC_BACKSP '\b'
-#define KC_TAB    0x9
+#define KC_TAB    '\t'
 #define KC_ESC    0x1B
 #define KC_SPACE  ' '
 
