@@ -120,6 +120,43 @@ _irq00Handler:
 
 ;Keyboard
 _irq01Handler:
+
+	push rax
+
+	; ante cualquier interrupción de teclado guardamos todo el contexto del CPU
+	; en caso de que el usuario pretenda realizar el snapshot del estado actual. 
+	; la CPU pushea al stack automaticamente los registros RIP, CS, RFLAGS, RSP, SS
+
+	; guardamos los valores de los registros generales
+	mov [registersArrayAux], rax
+    mov [registersArrayAux + 8*1], rbx      ; rbx
+    mov [registersArrayAux + 8*2], rcx      ; rcx
+    mov [registersArrayAux + 8*3], rdx      ; rdx
+    mov [registersArrayAux + 8*4], rbp      ; rsi
+    mov [registersArrayAux + 8*5], rdi      ; rdi
+    mov [registersArrayAux + 8*6], rsi      ; rbp
+    mov [registersArrayAux + 8*7], r8       ; r8
+    mov [registersArrayAux + 8*8], r9       ; r9
+    mov [registersArrayAux + 8*9], r10      ; r10
+    mov [registersArrayAux + 8*10], r11     ; r11
+    mov [registersArrayAux + 8*11], r12     ; r12
+    mov [registersArrayAux + 8*12], r13     ; r13
+    mov [registersArrayAux + 8*13], r14     ; r14
+    mov [registersArrayAux + 8*14], r15     ; r15
+
+    mov rax, [rsp + 8*1]                    ; RIP guardado por la CPU
+    mov [registersArrayAux + 8*15], rax      
+	mov rax, [rsp + 8*2]					; CS guardado por la CPU
+	mov [registersArrayAux + 8*16], rax      
+	mov rax, [rsp + 8*3] 				  	; RFLAGS guardado por la CPU
+	mov [registersArrayAux + 8*17], rax		  
+	mov rax, [rsp + 8*4]				   	; RSP guardado por la CPU
+	mov [registersArrayAux + 8*18], rax    
+	mov rax, [rsp + 8*5]					; SS guardado por la CPU
+	mov [registersArrayAux + 8*19], rax     
+	
+	pop rax ; recupero rax
+
 	irqHandlerMaster 1
 
 ;Cascade pic never called

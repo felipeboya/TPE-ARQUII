@@ -8,4 +8,6 @@
 #define STDOUT 1
 #define STDERR 2
 
+#define NULL 0
+
 #endif

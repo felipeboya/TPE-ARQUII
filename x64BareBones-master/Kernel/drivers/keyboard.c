@@ -187,5 +187,4 @@ uint8_t handleKey(uint8_t scancode){
     }
 
     return c;
-
 }
