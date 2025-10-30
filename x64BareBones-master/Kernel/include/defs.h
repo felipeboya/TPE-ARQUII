@@ -15,6 +15,7 @@
 #define ACS_IDT         ACS_DSEG
 #define ACS_INT_386 	0x0E		/* Interrupt GATE 32 bits */
 #define ACS_INT         ( ACS_PRESENT | ACS_INT_386 )
+#define ACS_INT_USER    (ACS_PRESENT | ACS_INT_386 | 0x60)  // DPL = 3 (bits 6-5 = 11) => da permiso a que el user space lo llame
 
 
 #define ACS_CODE        (ACS_PRESENT | ACS_CSEG | ACS_READ)

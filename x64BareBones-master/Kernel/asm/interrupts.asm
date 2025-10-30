@@ -196,6 +196,23 @@ _int80Handler:
 	add rsp, 8		
 
     popState
+	; creo que hay que no popear el rax porque se devuelve el valor de retorno ahí
+	;pop r15
+	;pop r14
+	;pop r13
+	;pop r12
+	;pop r11
+	;pop r10
+	;pop r9
+	;pop r8
+	;pop rsi
+	;pop rdi
+	;pop rbp
+	;pop rdx
+	;pop rcx
+	;pop rbx
+	;add rsp, 8
+
     iretq
 
 ; Exceptions
