@@ -1,4 +1,4 @@
-GLOBAL cpuVendor, getKey
+GLOBAL cpuVendor, getKey, snapshot
 
 section .text
 	
@@ -27,11 +27,11 @@ cpuVendor:
 	ret
 
 getKey:
-        push rbp
-        mov rbp, rsp
+    push rbp
+    mov rbp, rsp
 
-        mov rax, 0
-        in al, 0x60
+    mov rax, 0
+	in al, 0x60
 
-        leave
-        ret
+    leave
+    ret

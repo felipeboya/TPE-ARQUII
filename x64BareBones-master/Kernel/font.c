@@ -3481,6 +3481,6 @@ unsigned char fontBitmap[] = {
 };
 
 // Retorna un puntero al glyph (matriz de pixeles del caracter)
-unsigned char * fontPixelMap(unsigned char c, unsigned char * bitmap) {
+unsigned char * fontPixelMap(uint64_t c, unsigned char * bitmap) {
 	return bitmap + FONT_HEIGHT * (c-31);
 }

@@ -3,58 +3,53 @@
 #include <naiveConsole.h>
 #include <lib.h>
 
+typedef struct {
+    uint8_t keysBuffer[BUFFER_DIM];   // solo caracteres imprimibles (buffer circular)
+    uint64_t writeIndex;              // donde se escribe el proximo
+    uint64_t readIndex;               // donde se lee el proximo
+    uint64_t size;                    // cantidad de keys en el buffer
+} keyboardBuffer;
+
+static keyboardBuffer kb = {0};
+
 // Variables de estado del teclado
 static uint8_t caps_lock = 0;
 static uint8_t shift_pressed = 0;
 
 static uint8_t get_scancode();
-static const char scancode1_to_char[SCANCODE_MAP_SIZE];
-static const char shift_map[SCANCODE_MAP_SIZE];
-static char scancode_to_char(uint8_t scancode);
+static const uint8_t scancodesMap[SCANCODE_MAP_SIZE];
+static const uint8_t shift_map[SCANCODE_MAP_SIZE];
+static uint8_t scancodeToChar(uint8_t scancode);
+static uint8_t handleKey(uint8_t scancode);
 
 void keyboard_handler() {
     uint8_t scancode = get_scancode();
-    
-    // Verifica si es una tecla liberada
-    if (scancode >= UNPRESSED_BIT) {
-        scancode = scancode - UNPRESSED_BIT;  // Obtiene el scancode original
-        
-        // Liberación de shift
-        if (scancode == LEFT_SHIFT || scancode == RIGHT_SHIFT) {
-            shift_pressed = 0;
-        }
+
+    uint8_t c = handleKey(scancode);
+    if( c == 0 ){   
         return;
     }
-    
-    // Maneja las teclas de control
-    switch (scancode) {
-        case CAPS_LOCK:
-            caps_lock = !caps_lock;
-            return;
-        case LEFT_SHIFT:
-        case RIGHT_SHIFT:
-            shift_pressed = 1;
-            return;
-        default:
-            break;
+
+    kb.keysBuffer[kb.writeIndex] = c;
+    kb.writeIndex = (kb.writeIndex + 1) % BUFFER_DIM;
+    if (kb.size < BUFFER_DIM) {
+        kb.size++;
+    } else {
+        // avanzar readIndex para mantener tamaño constante y sobrescribir el más antiguo
+        kb.readIndex = (kb.readIndex + 1) % BUFFER_DIM;
     }
-    
-    // Convierte el scancode a carácter
-    char c = scancode_to_char(scancode);
-    
-    // Si es un carácter válido, lo imprime
-    if (c == KC_ENTER) {
-        textWrite(STDOUT, "\n", 1);
-    } else if(c == KC_BACKSP){
-        textWrite(STDOUT, "\b", 1);
-    } else if(c == KC_TAB){
-        textWrite(STDOUT, "\t", 1);
-    } else if (c == KC_ESC){
-        Color black = {0, 0, 0};
-        colorClearScreen(black);
-    } else if (c != KC_NONE) {
-        textWrite(STDOUT, &c, 1);
+
+    return;
+}
+
+uint8_t getChar(){
+    if ( kb.size == 0 ){
+        return 0; 
     }
+    uint8_t c = kb.keysBuffer[kb.readIndex];
+    kb.readIndex = (kb.readIndex + 1) % BUFFER_DIM;
+    kb.size--; 
+    return c; 
 }
 
 // Funciones Estáticas 
@@ -65,7 +60,7 @@ static uint8_t get_scancode() {
 }
 
 // Mapeo de scancode a caracteres minúsculas
-static const char scancode1_to_char[SCANCODE_MAP_SIZE] = {
+static const uint8_t scancodesMap[SCANCODE_MAP_SIZE] = {
     [0x01] = KC_ESC,
     [0x02] = '1',
     [0x03] = '2',
@@ -135,7 +130,7 @@ static const char scancode1_to_char[SCANCODE_MAP_SIZE] = {
 };
 
 // Mapeo de caracteres con shift presionado
-static const char shift_map[SCANCODE_MAP_SIZE] = {
+static const uint8_t shift_map[SCANCODE_MAP_SIZE] = {
     ['1'] = '!', ['2'] = '@', ['3'] = '#', ['4'] = '$', ['5'] = '%',
     ['6'] = '^', ['7'] = '&', ['8'] = '*', ['9'] = '(', ['0'] = ')',
     ['-'] = '_', ['='] = '+', ['['] = '{', [']'] = '}', ['\\'] = '|',
@@ -144,10 +139,9 @@ static const char shift_map[SCANCODE_MAP_SIZE] = {
 };
 
 // Convierte un scancode a su carácter correspondiente
-static char scancode_to_char(uint8_t scancode) {
-    char c = scancode1_to_char[scancode];
+static uint8_t scancodeToChar(uint8_t scancode) {
+    uint8_t c = scancodesMap[scancode];
     
-    // Si es una letra
     if (c >= 'a' && c <= 'z') {
         // Aplicar mayúsculas si corresponde
         if ((shift_pressed && !caps_lock) || (!shift_pressed && caps_lock)) {
@@ -159,5 +153,38 @@ static char scancode_to_char(uint8_t scancode) {
         c = shift_map[(unsigned char)c];
     }
     
+    return c;
+}
+
+// Retorna el scancode como char y maneja las teclas especiales
+uint8_t handleKey(uint8_t scancode){
+    // Verifica si es una tecla liberada
+    if (scancode >= UNPRESSED_BIT) {
+        scancode -= UNPRESSED_BIT;
+        
+        if (scancode == LEFT_SHIFT || scancode == RIGHT_SHIFT) {
+            shift_pressed = 0;
+        }
+        return 0;
+    }
+    
+    switch (scancode) {
+        case CAPS_LOCK:
+            caps_lock = !caps_lock;
+            return 0;
+        case LEFT_SHIFT:
+        case RIGHT_SHIFT:
+            shift_pressed = 1;
+            return 0;
+        default:
+            break; 
+    }
+    
+    uint8_t c = scancodeToChar(scancode);
+
+    if(c == KC_ESC || c == KC_NONE){
+        return 0;
+    }
+
     return c;
 }

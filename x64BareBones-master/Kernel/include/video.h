@@ -1,16 +1,11 @@
-#include <stdint.h>
 #ifndef VIDEODRIVER_H
 #define VIDEODRIVER_H
 
+#include <stdint.h>
+#include <status.h>
 
 #define TEXT_MODE 0
 #define VIDEO_MODE 1
-
-#define STDOUT 0
-#define STDERR 1
-
-#define OK 0 
-#define ERROR -1
 
 /**
  * Structure representing the VBE mode information.
@@ -53,6 +48,7 @@ struct vbeModeInfoStructure {
     uint8_t reserved1[206];
 } __attribute__ ((packed));
 
+typedef struct vbeModeInfoStructure * vbeInfoPtr;
 
 typedef struct {
     uint8_t r;
@@ -60,19 +56,15 @@ typedef struct {
     uint8_t b;
 } Color;
 
-
 // Dimensiones de la pantalla
-typedef struct{
-    int64_t width;
-    int64_t height;
-} ScreenInformation;
-
-typedef struct vbeModeInfoStructure * vbeInfoPtr;
-
+// typedef struct{
+//     int64_t width;
+//     int64_t height;
+// } ScreenInformation;
 
 int64_t putPixel(uint64_t x, uint64_t y, Color color);
 int64_t drawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, Color color);
-int64_t drawFont(uint64_t x, uint64_t y, uint8_t ascii, Color color, uint64_t fontSize);
+int64_t drawFont(uint64_t x, uint64_t y, uint64_t ch, Color color, uint64_t size);
 int64_t setFontSize(uint64_t size);
 void setFontColor(Color c);
 int64_t textWrite(uint64_t fd, const char * buffer, int64_t amount);

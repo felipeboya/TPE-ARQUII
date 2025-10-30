@@ -56,7 +56,7 @@ static void printBuffer();
 int64_t putPixel(uint64_t x, uint64_t y, Color color){
 	if(x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT){
 		return ERROR;
-	}
+}
 	if(!inVideoMode()){
 		return ERROR;
 	}
@@ -85,7 +85,7 @@ int64_t drawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, C
 }
 
 // MODO VIDEO
-int64_t drawFont(uint64_t x, uint64_t y, uint8_t ch, Color color, uint64_t size) {
+int64_t drawFont(uint64_t x, uint64_t y, uint64_t ch, Color color, uint64_t size) {
     if (ch < FIRST_ASCII_FONT || ch > LAST_ASCII_FONT) {
         return -1;
     }
@@ -100,10 +100,6 @@ int64_t drawFont(uint64_t x, uint64_t y, uint8_t ch, Color color, uint64_t size)
         }
     }
     return OK;
-}
-
-void setFontColor(Color c){
-    fontColor = c;
 }
 
 // MODO TEXTO

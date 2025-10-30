@@ -13,10 +13,15 @@ GLOBAL _irq03Handler
 GLOBAL _irq04Handler
 GLOBAL _irq05Handler
 
+GLOBAL _int80Handler
+
 GLOBAL _exception0Handler
 
 EXTERN irqDispatcher
+EXTERN syscallDispatcher
 EXTERN exceptionDispatcher
+
+EXTERN registersArrayAux
 
 SECTION .text
 
@@ -109,12 +114,51 @@ picSlaveMask:
     pop     rbp
     retn
 
+; Hardware Interrupts
+
 ;8254 Timer (Timer Tick)
 _irq00Handler:
 	irqHandlerMaster 0
 
 ;Keyboard
 _irq01Handler:
+
+	push rax
+
+	; ante cualquier interrupción de teclado guardamos todo el contexto del CPU
+	; en caso de que el usuario pretenda realizar el snapshot del estado actual. 
+	; la CPU pushea al stack automaticamente los registros RIP, CS, RFLAGS, RSP, SS
+
+	; guardamos los valores de los registros generales
+	mov [registersArrayAux], rax
+    mov [registersArrayAux + 8*1], rbx      ; rbx
+    mov [registersArrayAux + 8*2], rcx      ; rcx
+    mov [registersArrayAux + 8*3], rdx      ; rdx
+    mov [registersArrayAux + 8*4], rbp      ; rsi
+    mov [registersArrayAux + 8*5], rdi      ; rdi
+    mov [registersArrayAux + 8*6], rsi      ; rbp
+    mov [registersArrayAux + 8*7], r8       ; r8
+    mov [registersArrayAux + 8*8], r9       ; r9
+    mov [registersArrayAux + 8*9], r10      ; r10
+    mov [registersArrayAux + 8*10], r11     ; r11
+    mov [registersArrayAux + 8*11], r12     ; r12
+    mov [registersArrayAux + 8*12], r13     ; r13
+    mov [registersArrayAux + 8*13], r14     ; r14
+    mov [registersArrayAux + 8*14], r15     ; r15
+
+    mov rax, [rsp + 8*1]                    ; RIP guardado por la CPU
+    mov [registersArrayAux + 8*15], rax      
+	mov rax, [rsp + 8*2]					; CS guardado por la CPU
+	mov [registersArrayAux + 8*16], rax      
+	mov rax, [rsp + 8*3] 				  	; RFLAGS guardado por la CPU
+	mov [registersArrayAux + 8*17], rax		  
+	mov rax, [rsp + 8*4]				   	; RSP guardado por la CPU
+	mov [registersArrayAux + 8*18], rax    
+	mov rax, [rsp + 8*5]					; SS guardado por la CPU
+	mov [registersArrayAux + 8*19], rax     
+	
+	pop rax ; recupero rax
+
 	irqHandlerMaster 1
 
 ;Cascade pic never called
@@ -133,6 +177,28 @@ _irq04Handler:
 _irq05Handler:
 	irqHandlerMaster 5
 
+; System Calls (Software Interrupts)
+
+; calling conventions: https://wiki.osdev.org/Calling_Conventions
+
+_int80Handler:
+    pushState
+	push r9		 ; (stack) arg6
+    mov r9, r8       ; r9 = arg5
+    mov r8, r10      ; r8 = arg4
+    mov rcx, rdx     ; rcx = arg3
+    mov rdx, rsi     ; rdx = arg2
+    mov rsi, rdi     ; rsi = arg1
+    mov rdi, rax     ; rdi = syscall_id 
+
+    call syscallDispatcher
+
+	add rsp, 8		
+
+    popState
+    iretq
+
+; Exceptions
 
 ;Zero Division Exception
 _exception0Handler:
