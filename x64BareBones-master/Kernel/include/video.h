@@ -64,7 +64,7 @@ typedef struct {
 
 int64_t putPixel(uint64_t x, uint64_t y, Color color);
 int64_t drawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, Color color);
-int64_t drawFont(uint64_t x, uint64_t y, uint8_t ascii, Color color, uint64_t fontSize);
+int64_t drawFont(uint64_t x, uint64_t y, uint64_t ch, Color color, uint64_t size);
 int64_t setFontSize(uint64_t size);
 void setFontColor(Color c);
 int64_t textWrite(uint64_t fd, const char * buffer, int64_t amount);

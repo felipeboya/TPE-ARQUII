@@ -21,6 +21,8 @@ EXTERN irqDispatcher
 EXTERN syscallDispatcher
 EXTERN exceptionDispatcher
 
+EXTERN registersArrayAux
+
 SECTION .text
 
 %macro pushState 0

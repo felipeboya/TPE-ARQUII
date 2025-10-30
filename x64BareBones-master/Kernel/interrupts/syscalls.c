@@ -4,7 +4,12 @@
 #include <keyboard.h>
 #include <snapshot.h>
 
+#define REGISTERS_QTY 20
+
 #define castToColor(c) ((Color){ (uint8_t)(((c) >> 16) & 0xFF), (uint8_t)(((c) >> 8)  & 0xFF), (uint8_t)((c) & 0xFF)})
+
+uint64_t registersArray[REGISTERS_QTY];
+uint64_t registersArrayAux[REGISTERS_QTY];
 
 static uint64_t _read(uint64_t fd, char * buffer, uint64_t amount);
 static uint64_t _textWrite(uint64_t fd, const char * buffer, uint64_t amount);
@@ -36,7 +41,6 @@ uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, ui
             return _drawFont(arg1, arg2, arg3, arg4, arg5);
         case SYS_SET_MODE :
             return _setMode(arg1, arg2);
-
         default :
             return ERROR;
     }
