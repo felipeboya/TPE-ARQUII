@@ -16,14 +16,14 @@ static keyboardBuffer kb = {0};
 static uint8_t caps_lock = 0;
 static uint8_t shift_pressed = 0;
 
-static uint8_t get_scancode();
+static uint8_t getScancode();
 static const uint8_t scancodesMap[SCANCODE_MAP_SIZE];
 static const uint8_t shift_map[SCANCODE_MAP_SIZE];
 static uint8_t scancodeToChar(uint8_t scancode);
 static uint8_t handleKey(uint8_t scancode);
 
-void keyboard_handler() {
-    uint8_t scancode = get_scancode();
+void keyboardHandler() {
+    uint8_t scancode = getScancode();
 
     uint8_t c = handleKey(scancode);
     if( c == 0 ){   
@@ -55,7 +55,7 @@ uint8_t getChar(){
 // Funciones Estáticas 
 
 // Lee un scancode del puerto de teclado
-static uint8_t get_scancode() {
+static uint8_t getScancode() {
     return getKey();
 }
 

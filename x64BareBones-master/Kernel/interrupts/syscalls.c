@@ -2,6 +2,7 @@
 #include <status.h>
 #include <video.h>
 #include <keyboard.h>
+#include <audio.h>
 #include <snapshot.h>
 
 #define REGISTERS_QTY 20
@@ -20,6 +21,11 @@ static uint64_t _putPixel(uint64_t x, uint64_t y, uint64_t color);
 static uint64_t _drawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, uint64_t color);
 static uint64_t _drawFont(uint64_t x, uint64_t y, uint64_t ch, uint64_t color, uint64_t size);
 static uint64_t _setMode(uint64_t mode, uint64_t color);
+static uint64_t _sleep(uint64_t sleepTicks);
+static uint64_t _playSound(uint64_t frequency, uint64_t time);
+uint64_t _sysGetTime(timeStruct * time);
+
+
 
 uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6){
     switch(syscall_id){
@@ -40,7 +46,13 @@ uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, ui
         case SYS_DRAW_FONT :
             return _drawFont(arg1, arg2, arg3, arg4, arg5);
         case SYS_SET_MODE :
-            return _setMode(arg1, arg2);
+            _setMode(arg1, arg2);
+        case SYS_SLEEP :
+            return _sleep(arg1);
+        case SYS_PLAY_SOUND :
+            return _playSound(arg1, arg2);
+        case SYS_GET_TIME :
+            return _sysGetTime((timeStructPtr) arg1);
         default :
             return ERROR;
     }
@@ -116,4 +128,24 @@ static uint64_t _drawFont(uint64_t x, uint64_t y, uint64_t ch, uint64_t color, u
 
 static uint64_t _setMode(uint64_t mode, uint64_t color){
     return setMode(mode, castToColor(color));
+}
+
+static uint64_t _sleep(uint64_t sleepTicks){
+    sleepForTicks(sleepTicks);
+    return OK;
+}
+
+static uint64_t _playSound(uint64_t frequency, uint64_t time){
+    beep(frequency, time);
+    return OK;
+}
+
+uint64_t _sysGetTime(timeStruct * time){
+    time->seconds = getRTCSeconds();
+    time->minutes =  getRTCMinutes();
+    time->hour =  getRTCHours();
+    time->day = getRTCDayOfMonth();
+    time->month = getRTCMonth();
+    time->year = getRTCYear();
+    return OK;
 }

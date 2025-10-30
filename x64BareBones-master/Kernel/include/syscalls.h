@@ -14,6 +14,20 @@
 #define SYS_DRAW_RECTANGLE 0x6
 #define SYS_DRAW_FONT 0x7
 #define SYS_SET_MODE 0x8
+#define SYS_SLEEP 0x9
+#define SYS_PLAY_SOUND 0xA
+#define SYS_GET_TIME 0xB
+
+typedef struct {
+    uint8_t year;
+    uint8_t month;
+    uint8_t day;
+    uint8_t hour;
+    uint8_t minutes;
+    uint8_t seconds;
+} timeStruct;
+
+typedef timeStruct * timeStructPtr;
 
 
 uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6);

@@ -22,6 +22,6 @@
 #define LEFT_SHIFT        0x2A
 #define RIGHT_SHIFT       0x36
 
-void keyboard_handler();
+void keyboardHandler();
 
 #endif

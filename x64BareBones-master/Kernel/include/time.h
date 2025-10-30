@@ -1,8 +1,11 @@
 #ifndef _TIME_H_
 #define _TIME_H_
 
-void timer_handler();
-int ticks_elapsed();
-int seconds_elapsed();
+#include <lib.h>
+
+void timerHandler();
+int ticksElapsed();
+int secondsElapsed();
+void sleepForTicks(uint64_t sleepTicks);
 
 #endif

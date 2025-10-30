@@ -1,15 +1,26 @@
 #include <time.h>
+#include <lib.h>
 
-static unsigned long ticks = 0;
 
-void timer_handler() {
-	ticks++;
+#define TICKS_PER_SEC 18
+
+static uint64_t totalTicks = 0;
+
+void timerHandler() {
+	totalTicks++;
 }
 
-int ticks_elapsed() {
-	return ticks;
+int ticksElapsed() {
+	return totalTicks;
 }
 
-int seconds_elapsed() {
-	return ticks / 18;
+int secondsElapsed() {
+	return totalTicks / TICKS_PER_SEC;
+}
+
+void sleepForTicks(uint64_t sleepTicks){
+	uint64_t start = totalTicks;
+	while(totalTicks - start < sleepTicks){
+		_hlt();
+	}
 }

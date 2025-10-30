@@ -1,13 +1,13 @@
 
 #define ZERO_EXCEPTION_ID 0
 
-static void zero_division();
+static void zeroDivision();
 
 void exceptionDispatcher(int exception) {
 	if (exception == ZERO_EXCEPTION_ID)
-		zero_division();
+		zeroDivision();
 }
 
-static void zero_division() {
+static void zeroDivision() {
 	// Handler para manejar excepcíon
 }

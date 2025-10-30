@@ -1,4 +1,4 @@
-GLOBAL cpuVendor, getKey, snapshot
+GLOBAL cpuVendor, getKey, rtc, outb, inb
 
 section .text
 	
@@ -34,4 +34,37 @@ getKey:
 	in al, 0x60
 
     leave
+    ret
+
+rtc:
+    push rbp
+    mov rbp, rsp
+
+    mov al, dil
+    out 70h, al
+    in al, 71h
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+; void outb(uint16_t port, uint8_t value)
+outb:
+	push rdx
+
+    mov dx, di
+    mov al, sil
+	out dx, al
+
+    pop rdx
+    ret
+
+; extern uint8_t inb(uint16_t port)
+inb:
+    push rdx
+
+    mov dx, di
+    in al, dx
+
+    pop rdx
     ret
