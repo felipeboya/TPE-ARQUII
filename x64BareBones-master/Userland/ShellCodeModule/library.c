@@ -1,7 +1,6 @@
 #include <library.h>
 #include <utils.h>
 
-
 uint64_t read(uint64_t fd, char * buffer, uint64_t count){
     return sys_read(fd, buffer, count);   // guarda los valores de los parametros en los registros correspondientes
 }
