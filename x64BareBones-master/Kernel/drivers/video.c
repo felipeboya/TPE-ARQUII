@@ -53,7 +53,7 @@ static void reBufferPrint();
 static void printBuffer();
 
 // MODO VIDEO
-int64_t putPixel(uint64_t x, uint64_t y, Color color){
+uint64_t putPixel(uint64_t x, uint64_t y, Color color){
 	if(x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT){
 		return ERROR;
 }
@@ -69,7 +69,7 @@ int64_t putPixel(uint64_t x, uint64_t y, Color color){
 }
 
 // MODO VIDEO
-int64_t drawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, Color color){
+uint64_t drawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, Color color){
     if(x+width > SCREEN_WIDTH || y+height > SCREEN_HEIGHT){
         return ERROR;
     }
@@ -85,7 +85,7 @@ int64_t drawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, C
 }
 
 // MODO VIDEO
-int64_t drawFont(uint64_t x, uint64_t y, uint64_t ch, Color color, uint64_t size) {
+uint64_t drawFont(uint64_t x, uint64_t y, uint64_t ch, Color color, uint64_t size) {
     if (ch < FIRST_ASCII_FONT || ch > LAST_ASCII_FONT) {
         return -1;
     }
@@ -103,7 +103,7 @@ int64_t drawFont(uint64_t x, uint64_t y, uint64_t ch, Color color, uint64_t size
 }
 
 // MODO TEXTO
-int64_t setFontSize(uint64_t size) {
+uint64_t setFontSize(uint64_t size) {
     if(!inTextMode()){
         return ERROR;
     }
@@ -125,7 +125,7 @@ int64_t setFontSize(uint64_t size) {
 
 // MODO TEXTO Y VIDEO
 // Limpia la pantalla y la deja de un solo color
-int64_t colorClearScreen(Color color){
+uint64_t colorClearScreen(Color color){
     if(driverMode == TEXT_MODE){
         backgroundColor = color;
         currentScreenPoint.x = currentScreenPoint.y = 0;
@@ -138,7 +138,7 @@ int64_t colorClearScreen(Color color){
 }
 
 // MODO TEXTO Y VIDEO
-int64_t setMode(uint64_t mode, Color c){
+uint64_t setMode(uint64_t mode, Color c){
     if(!(mode == TEXT_MODE || mode == VIDEO_MODE) ){
         return ERROR;
     }
@@ -158,7 +158,7 @@ int64_t setMode(uint64_t mode, Color c){
 }
 
 // MODO TEXTO
-int64_t textWrite(uint64_t fd, const char * buffer, int64_t amount){
+uint64_t textWrite(uint64_t fd, const char * buffer, int64_t amount){
     if(!inTextMode()){
         return ERROR;
     }
@@ -189,6 +189,12 @@ int64_t textWrite(uint64_t fd, const char * buffer, int64_t amount){
         }
     }
     return i;
+}
+
+uint64_t getScreenInfo(screenInfoPtr screenInformation){
+    screenInformation->width = SCREEN_WIDTH;
+    screenInformation->height = SCREEN_HEIGHT;
+    return OK;
 }
 
 //Funciones STATIC:

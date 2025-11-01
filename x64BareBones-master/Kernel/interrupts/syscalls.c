@@ -23,9 +23,8 @@ static uint64_t _drawFont(uint64_t x, uint64_t y, uint64_t ch, uint64_t color, u
 static uint64_t _setMode(uint64_t mode, uint64_t color);
 static uint64_t _sleep(uint64_t sleepTicks);
 static uint64_t _playSound(uint64_t frequency, uint64_t time);
-uint64_t _sysGetTime(timeStruct * time);
-
-
+static uint64_t _getTime(timeStructPtr time);
+static uint64_t _getScreenInfo(screenInfoPtr screenInformation);
 
 uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6){
     switch(syscall_id){
@@ -52,7 +51,9 @@ uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, ui
         case SYS_PLAY_SOUND :
             return _playSound(arg1, arg2);
         case SYS_GET_TIME :
-            return _sysGetTime((timeStructPtr) arg1);
+            return _getTime((timeStructPtr) arg1);
+        case SYS_GET_SCREEN_INFO :
+            return _getScreenInfo((screenInfoPtr) arg1);
         default :
             return ERROR;
     }
@@ -140,7 +141,7 @@ static uint64_t _playSound(uint64_t frequency, uint64_t time){
     return OK;
 }
 
-uint64_t _sysGetTime(timeStruct * time){
+static uint64_t _getTime(timeStructPtr time){
     time->seconds = getRTCSeconds();
     time->minutes =  getRTCMinutes();
     time->hour =  getRTCHours();
@@ -148,4 +149,8 @@ uint64_t _sysGetTime(timeStruct * time){
     time->month = getRTCMonth();
     time->year = getRTCYear();
     return OK;
+}
+
+static uint64_t _getScreenInfo(screenInfoPtr screenInformation){
+    return getScreenInfo(screenInformation);
 }

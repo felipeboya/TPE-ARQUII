@@ -57,19 +57,21 @@ typedef struct {
 } Color;
 
 // Dimensiones de la pantalla
-// typedef struct{
-//     int64_t width;
-//     int64_t height;
-// } ScreenInformation;
+struct ScreenInformation{
+    uint64_t width;
+    uint64_t height;
+};
 
-int64_t putPixel(uint64_t x, uint64_t y, Color color);
-int64_t drawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, Color color);
-int64_t drawFont(uint64_t x, uint64_t y, uint64_t ch, Color color, uint64_t size);
-int64_t setFontSize(uint64_t size);
+typedef struct ScreenInformation * screenInfoPtr;
+
+uint64_t putPixel(uint64_t x, uint64_t y, Color color);
+uint64_t drawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, Color color);
+uint64_t drawFont(uint64_t x, uint64_t y, uint64_t ch, Color color, uint64_t size);
+uint64_t setFontSize(uint64_t size);
 void setFontColor(Color c);
-int64_t textWrite(uint64_t fd, const char * buffer, int64_t amount);
-// int64_t getScreenInfo(ScreenInformation * screenInformation);
-int64_t setMode(uint64_t mode, Color c);
-int64_t colorClearScreen(Color color);
+uint64_t textWrite(uint64_t fd, const char * buffer, int64_t amount);
+uint64_t getScreenInfo(screenInfoPtr screenInformation);
+uint64_t setMode(uint64_t mode, Color c);
+uint64_t colorClearScreen(Color color);
 
 #endif

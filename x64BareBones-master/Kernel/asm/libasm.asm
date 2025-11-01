@@ -48,7 +48,6 @@ rtc:
     pop rbp
     ret
 
-; void outb(uint16_t port, uint8_t value)
 outb:
 	push rdx
 
@@ -59,7 +58,6 @@ outb:
     pop rdx
     ret
 
-; extern uint8_t inb(uint16_t port)
 inb:
     push rdx
 

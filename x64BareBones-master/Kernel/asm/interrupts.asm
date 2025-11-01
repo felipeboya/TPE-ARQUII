@@ -1,4 +1,3 @@
-
 GLOBAL _cli
 GLOBAL _sti
 GLOBAL picMasterMask
@@ -59,6 +58,23 @@ SECTION .text
 	pop rcx
 	pop rbx
 	pop rax
+%endmacro
+
+%macro popStateNoRax 0
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rsi
+	pop rdi
+	pop rbp
+	pop rdx
+	pop rcx
+	pop rbx
 %endmacro
 
 %macro irqHandlerMaster 1
@@ -183,7 +199,7 @@ _irq05Handler:
 
 _int80Handler:
     pushState
-	push r9		 ; (stack) arg6
+	push r9		 	 ; (stack) arg6
     mov r9, r8       ; r9 = arg5
     mov r8, r10      ; r8 = arg4
     mov rcx, rdx     ; rcx = arg3
@@ -195,24 +211,8 @@ _int80Handler:
 
 	add rsp, 8		
 
-    popState
-	; creo que hay que no popear el rax porque se devuelve el valor de retorno ahí
-	;pop r15
-	;pop r14
-	;pop r13
-	;pop r12
-	;pop r11
-	;pop r10
-	;pop r9
-	;pop r8
-	;pop rsi
-	;pop rdi
-	;pop rbp
-	;pop rdx
-	;pop rcx
-	;pop rbx
-	;add rsp, 8
-
+	popStateNoRax
+	
     iretq
 
 ; Exceptions

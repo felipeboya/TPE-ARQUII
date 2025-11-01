@@ -4,7 +4,7 @@
 #include <lib.h>
 
 typedef struct {
-    uint8_t keysBuffer[BUFFER_DIM];   // solo caracteres imprimibles (buffer circular)
+    uint8_t keysBuffer[BUFFER_DIM];   // (buffer circular)
     uint64_t writeIndex;              // donde se escribe el proximo
     uint64_t readIndex;               // donde se lee el proximo
     uint64_t size;                    // cantidad de keys en el buffer
@@ -66,7 +66,7 @@ static const uint8_t scancodesMap[SCANCODE_MAP_SIZE] = {
     [0x03] = '2',
     [0x04] = '3',
     [0x05] = '4',
-    [0x06] = '5',
+    [0x06] = '5', 
     [0x07] = '6',
     [0x08] = '7',
     [0x09] = '8',

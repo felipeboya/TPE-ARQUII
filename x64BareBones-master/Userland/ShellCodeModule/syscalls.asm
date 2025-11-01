@@ -1,5 +1,16 @@
-global sys_read
-global sys_write 
+GLOBAL sys_read
+GLOBAL sys_write
+GLOBAL sys_registers_snapshot
+GLOBAL sys_set_font_size
+GLOBAL sys_clear_screen
+GLOBAL sys_put_pixel
+GLOBAL sys_draw_rectangle
+GLOBAL sys_draw_font
+GLOBAL sys_set_mode
+GLOBAL sys_sleep
+GLOBAL sys_play_sound
+GLOBAL sys_get_time
+GLOBAL sys_get_screen_info
 
 section .text
 
@@ -15,8 +26,41 @@ section .text
     ret
 %endmacro
 
-sys_read: 
+sys_read:
     syscall 0
 
-sys_write: 
+sys_write:
     syscall 1
+
+sys_registers_snapshot:
+    syscall 2
+
+sys_set_font_size:
+    syscall 3
+
+sys_clear_screen:
+    syscall 4
+
+sys_put_pixel:
+    syscall 5
+
+sys_draw_rectangle:
+    syscall 6
+
+sys_draw_font:
+    syscall 7
+
+sys_set_mode:
+    syscall 8
+
+sys_sleep:
+    syscall 9
+
+sys_play_sound:
+    syscall 0xA
+
+sys_get_time:
+    syscall 0xB
+
+sys_get_screen_info:
+    syscall 0xC

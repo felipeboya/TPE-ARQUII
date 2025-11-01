@@ -17,6 +17,7 @@
 #define SYS_SLEEP 0x9
 #define SYS_PLAY_SOUND 0xA
 #define SYS_GET_TIME 0xB
+#define SYS_GET_SCREEN_INFO 0xC
 
 typedef struct {
     uint8_t year;
