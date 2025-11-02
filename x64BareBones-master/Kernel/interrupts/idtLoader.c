@@ -42,7 +42,7 @@ static void setup_IDT_entry (int index, uint64_t offset) {
   idt[index].offset_l = offset & 0xFFFF;
   idt[index].offset_m = (offset >> 16) & 0xFFFF;
   idt[index].offset_h = (offset >> 32) & 0xFFFFFFFF;
-  // idt[index].access = ACS_INT; porque sino por default todo se puede usar desde el kernel o hardware
+  //idt[index].access = ACS_INT; //porque sino por default todo se puede usar desde el kernel o hardware
   idt[index].access = (index == 0x80) ? ACS_INT_USER : ACS_INT; // solo se cambia el permiso para las syscalls
   idt[index].cero = 0;
   idt[index].other_cero = (uint64_t) 0;

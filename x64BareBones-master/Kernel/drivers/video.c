@@ -151,7 +151,7 @@ uint64_t setMode(uint64_t mode, Color c){
     if(mode == TEXT_MODE){
         printBuffer();			// Printea el buffer cuando vuelve a modo texto
     }else{
-    	colorClearScreen(c);    // Modo video con pantalla limpia
+    	clearScreen();    // Modo video con pantalla limpia
     }
 
     return OK;
@@ -255,7 +255,7 @@ static void addCharToBuffer(uint8_t c, uint8_t fd) {
     }
     charBufferType aux = {c, fd};
     charBuffer[bufferIndex] = aux;
-    bufferIndex ++;
+    bufferIndex++;
 }
 
 static void tabulator(){

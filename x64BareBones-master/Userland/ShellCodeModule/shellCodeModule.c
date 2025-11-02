@@ -5,12 +5,16 @@ static int var1 = 0;
 static int var2 = 0;
 
 int main() {
-	
-	printPrompt();
+    uint64_t color = 0x000000;  // Negro (más apropiado para modo texto)
+    //setMode(TEXT_MODE, color);     
 
-	//Test if BSS is properly set up
-	if (var1 == 0 && var2 == 0)
-		return 0xDEADC0DE;
+    for (int i = 0; i < 10; i++){
+        printPrompt();
+    }
 
-	return 0xDEADBEEF;
+    // Test if BSS is properly set up
+    if (var1 == 0 && var2 == 0)
+        return 0xDEADC0DE;
+
+    return 0xDEADBEEF;
 }

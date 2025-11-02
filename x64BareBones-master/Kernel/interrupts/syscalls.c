@@ -45,7 +45,7 @@ uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, ui
         case SYS_DRAW_FONT :
             return _drawFont(arg1, arg2, arg3, arg4, arg5);
         case SYS_SET_MODE :
-            _setMode(arg1, arg2);
+            return _setMode(arg1, arg2);
         case SYS_SLEEP :
             return _sleep(arg1);
         case SYS_PLAY_SOUND :
@@ -74,7 +74,32 @@ static uint64_t _read(uint64_t fd, char * buffer, uint64_t amount){
     return i;
 }
 
-static uint64_t _textWrite(uint64_t fd, const char * buffer, uint64_t amount){
+// // Lee el buffer cargado por el driver de teclado (keysBuffer)
+// static uint64_t _read(uint64_t fd, char * buffer, uint64_t amount){
+//     if ( fd != STDIN ){
+//         return ERROR;
+//     }
+
+//     uint64_t i = 0;
+//     char c = 0;
+//     while (i < amount - 1) {   
+//         // Esperar hasta que haya un carácter disponible
+//         while ((c = getChar()) == 0) {
+//             _hlt(); // habilita interrupciones y duerme
+//         }
+
+//         // Cuando hay carácter, procesarlo
+//         if (c == KC_ENTER) {         // Enter -> fin de línea
+//             break;
+//         }
+//         buffer[i++] = c;
+//     }
+
+//     buffer[i] = '\0';
+//     return i;
+// }
+
+ uint64_t _textWrite(uint64_t fd, const char * buffer, uint64_t amount){
     return textWrite(fd, buffer, amount);
 }
 

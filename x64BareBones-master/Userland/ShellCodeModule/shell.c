@@ -16,7 +16,7 @@ Command commands[COMMANDS_QUANTITY] = {
 };
 
 void printPrompt(){
-    char prompt[] = {'$', '>', ' '}; 
+    char prompt[] = "$> ";  
     write(STDOUT, prompt);
 }
 

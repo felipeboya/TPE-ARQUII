@@ -209,9 +209,9 @@ _int80Handler:
 
     call syscallDispatcher
 
-	add rsp, 8		
-
-	popStateNoRax
+	add rsp, 8		; r9
+	popStateNoRax	; popeamos todo menos rax
+	add rsp, 8		; no recuperamos rax
 	
     iretq
 
