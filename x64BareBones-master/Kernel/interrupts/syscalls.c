@@ -74,31 +74,6 @@ static uint64_t _read(uint64_t fd, char * buffer, uint64_t amount){
     return i;
 }
 
-// // Lee el buffer cargado por el driver de teclado (keysBuffer)
-// static uint64_t _read(uint64_t fd, char * buffer, uint64_t amount){
-//     if ( fd != STDIN ){
-//         return ERROR;
-//     }
-
-//     uint64_t i = 0;
-//     char c = 0;
-//     while (i < amount - 1) {   
-//         // Esperar hasta que haya un carácter disponible
-//         while ((c = getChar()) == 0) {
-//             _hlt(); // habilita interrupciones y duerme
-//         }
-
-//         // Cuando hay carácter, procesarlo
-//         if (c == KC_ENTER) {         // Enter -> fin de línea
-//             break;
-//         }
-//         buffer[i++] = c;
-//     }
-
-//     buffer[i] = '\0';
-//     return i;
-// }
-
  uint64_t _textWrite(uint64_t fd, const char * buffer, uint64_t amount){
     return textWrite(fd, buffer, amount);
 }

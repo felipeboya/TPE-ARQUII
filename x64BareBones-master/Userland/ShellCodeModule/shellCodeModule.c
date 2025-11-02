@@ -1,15 +1,19 @@
 #include <library.h>
 #include <shell.h>
+#include <stdlib.h>
 
 static int var1 = 0;
 static int var2 = 0;
 
 int main() {
-    uint64_t color = 0x000000;  // Negro (más apropiado para modo texto)
-    //setMode(TEXT_MODE, color);     
+    // Inicia en modo texto con fondo negro 
 
-    for (int i = 0; i < 10; i++){
+    char buffer[BUFF_SIZE];
+
+    while (1) {
         printPrompt();
+        readLine(buffer);
+        processLine(buffer);
     }
 
     // Test if BSS is properly set up

@@ -2,7 +2,7 @@ include ../Makefile.inc
 
 MODULE=0000-shellCodeModule.bin
 SOURCES=$(wildcard [^_]*.c)
-SOURCES_ASM=$(wildcard *.asm)
+SOURCES_ASM=$(wildcard asm/*.asm)
 
 OBJECTS_ASM = $(SOURCES_ASM:.asm=.o)
 
@@ -19,6 +19,6 @@ all: $(MODULE)
 $(MODULE): $(SOURCES) $(OBJECTS_ASM)
 	$(GCC) $(GCCFLAGS) $(INCLUDES) -T shellCodeModule.ld _loader.c $(SOURCES) $(OBJECTS_ASM) -o ../$(MODULE)
 clean:
-	rm -rf *.o
+	rm -rf asm/*.o *.o
 
 .PHONY: all clean print

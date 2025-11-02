@@ -4,6 +4,6 @@
 #include <stdint.h>
 
 uint64_t strlen(const char * s);
-uint8_t getchar();
+uint64_t strcmp(const char * str1, const char * str2);
 
 #endif
