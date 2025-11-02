@@ -2,10 +2,10 @@
 #define LIBRARY_H
 
 #include <stdint.h>
+#include <status.h>
 
-#define STDIN 0
-#define STDOUT 1
-#define STDERR 2
+#define TEXT_MODE 0
+#define VIDEO_MODE 1
 
 typedef struct {
     uint64_t rax, rbx, rcx, rdx, rbp, rdi, rsi, r8, r9, r10, r11, r12, r13, r14, r15, rip, cs, rflags, rsp, ss;
