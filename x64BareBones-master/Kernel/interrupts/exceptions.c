@@ -1,3 +1,4 @@
+#include <stdint.h>
 #define ZERO_EXCEPTION_ID 0
 #define SIX_EXCEPTION_ID 6
 
