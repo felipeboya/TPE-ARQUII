@@ -21,13 +21,12 @@ void readLine(char * buffer);
 void processLine(const char * buffer);
 
 void helpFunction();
+void clearFunction();
 void registersFunction();
 void timeFunction();
-void clearFunction();
-void zommInFunction();
+void zoomInFunction();
 void zoomOutFunction();
 void tronFunction();
 void beepFunction();
-
 
 #endif

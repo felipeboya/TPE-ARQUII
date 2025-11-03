@@ -8,6 +8,8 @@ static int var2 = 0;
 int main() {
     // Inicia en modo texto con fondo negro 
 
+    write(STDOUT, "Welcome! Run the command 'help' to see all the commands\n");
+
     char buffer[BUFF_SIZE];
 
     while (1) {

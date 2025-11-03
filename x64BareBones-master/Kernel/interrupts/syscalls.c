@@ -112,7 +112,8 @@ static uint64_t _setFontSize(uint64_t size){
 }
 
 static uint64_t _clearScreen(){
-    return colorClearScreen((Color) {0,0,0});
+    Color color = {0, 0, 0};
+    return colorClearScreen(color);
 }
 
 static uint64_t _putPixel(uint64_t x, uint64_t y, uint64_t color){

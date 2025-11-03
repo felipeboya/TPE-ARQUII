@@ -11,10 +11,12 @@ uint64_t strlen(const char *s) {
 }
 
 uint64_t strcmp(const char * str1, const char * str2) {
-    for(int i=0, j=0; str1[i] != 0 || str2[j] != 0; i++, j++) {
-        if(str1[i] != str2[j]) {
-            return str1[i] - str2[j];
+    int i = 0;
+    while (str1[i] != 0 && str2[i] != 0) {
+        if (str1[i] != str2[i]) {
+            return str1[i] - str2[i];
         }
+        i++;
     }
-    return OK;
+    return str1[i] - str2[i];
 }
