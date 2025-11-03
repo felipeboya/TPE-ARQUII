@@ -170,7 +170,7 @@ uint8_t handleKey(uint8_t scancode){
         snapshot();
         return;
     }
-    
+
     switch (scancode) {
         case CAPS_LOCK:
             caps_lock = !caps_lock;

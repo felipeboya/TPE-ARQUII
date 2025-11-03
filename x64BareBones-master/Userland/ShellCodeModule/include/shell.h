@@ -3,6 +3,7 @@
 
 #include <library.h>
 #include <utils.h>
+#include <tron.h>
 
 #define BUFF_SIZE  125
 #define MAX_ASCII 255

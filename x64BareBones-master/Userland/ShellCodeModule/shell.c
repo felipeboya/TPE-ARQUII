@@ -12,11 +12,11 @@ Command commands[COMMANDS_QUANTITY] = {
     {"zoomIn", "Zoom in the screen", zoomInFunction},
     {"zoomOut", "Zoom out the screen", zoomOutFunction},
     {"tron", "Play tron", tronFunction},
-    {"beep", "Make a sound", beepFunction},
+    {"beep", "Make a sound", beepFunction}
 };
 
+void execute(const char * entry);
 static void toUtcMinus3(timeStructPtr time);
-static char getChar();
 static void extractCommand(const char * buffer, char * command);
 static void newLine();
 
@@ -56,7 +56,6 @@ void processLine(const char * buffer){
     extractCommand(buffer, command);
     newLine();
     execute(command);
-    newLine();
 }
 
 void execute(const char * entry){
@@ -66,7 +65,7 @@ void execute(const char * entry){
             return;
         }
     }
-    write(STDOUT, "Shell: Command not found");
+    printf("Shell: Command not found\n");
 }
 
 // Command Functions
@@ -93,11 +92,12 @@ void registersFunction(){
 
 void timeFunction(){
     timeStruct time;
-    sys_get_time(&time);
+    getTime(&time);
     toUtcMinus3(&time);
+    printf("Argentina\n");
     printf("%d/%d/%d\n", time.day, time.month, time.year);
     int64_t h = time.hour;
-    printf("%d:%d:%d (Argentina)", h, time.minutes, time.seconds);
+    printf("%d:%d:%d\n", h, time.minutes, time.seconds);
 }
 
 static void toUtcMinus3(timeStructPtr time){
@@ -142,7 +142,7 @@ void zoomOutFunction(){
 }
 
 void tronFunction(){
-
+    playTron();
 }
 
 //  NO ANDA
@@ -150,8 +150,7 @@ void beepFunction(){
     playSound(440, 20);
 }
 
-// Static Functions
-static char getChar(){
+char getChar(){
     char c;
     while ( read(STDIN, &c, 1) == 0 || c > MAX_ASCII ){
         _hlt();
@@ -159,6 +158,7 @@ static char getChar(){
     return (char) c;
 }
 
+// Static Functions
 static void extractCommand(const char * buffer, char * command){
     uint64_t cmdIdx = 0;
     for ( int i = 0; i < BUFF_SIZE; i++ ){
@@ -173,15 +173,4 @@ static void extractCommand(const char * buffer, char * command){
 
 static void newLine(){
     write(STDOUT, "\n");
-}
-
-void reverse(char *str, int len) {
-    int i = 0, j = len - 1;
-    while (i < j) {
-        char temp = str[i];
-        str[i] = str[j];
-        str[j] = temp;
-        i++;
-        j--;
-    }
 }
