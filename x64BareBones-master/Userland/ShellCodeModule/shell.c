@@ -56,7 +56,6 @@ void processLine(const char * buffer){
     extractCommand(buffer, command);
     newLine();
     execute(command);
-    newLine();
 }
 
 void execute(const char * entry){
@@ -66,7 +65,7 @@ void execute(const char * entry){
             return;
         }
     }
-    write(STDOUT, "Shell: Command not found");
+    printf("Shell: Command not found\n");
 }
 
 // Command Functions
@@ -95,9 +94,10 @@ void timeFunction(){
     timeStruct time;
     getTime(&time);
     toUtcMinus3(&time);
+    printf("Argentina\n");
     printf("%d/%d/%d\n", time.day, time.month, time.year);
     int64_t h = time.hour;
-    printf("%d:%d:%d (Argentina)", h, time.minutes, time.seconds);
+    printf("%d:%d:%d\n", h, time.minutes, time.seconds);
 }
 
 static void toUtcMinus3(timeStructPtr time){
@@ -142,7 +142,7 @@ void zoomOutFunction(){
 }
 
 void tronFunction(){
-    
+    playTron();
 }
 
 //  NO ANDA

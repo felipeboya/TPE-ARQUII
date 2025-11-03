@@ -1,0 +1,46 @@
+#ifndef TRON_H
+#define TRON_H
+
+#include <library.h>
+
+#define CHARACTER_WIDTH 8
+#define CHARACTER_HEIGHT 16
+#define SCREEN_WIDTH 1024
+#define SCREEN_HEIGHT 768
+
+#define PIXEL 8
+
+#define MAP_WIDTH 128
+#define MAP_HEIGHT 96
+
+#define BLACK 0x0
+#define GRAY 0x808080
+#define RED 0xFF0000
+#define GREEN 0x00FF00
+#define BLUE 0x0000FF
+#define ORANGE 0xFFA500
+#define WHITE 0xFFFFFF
+
+#define PLAYER_1_INIT_X 64
+#define PLAYER_1_INIT_Y 94
+
+void playTron();
+
+
+enum direction {UP, DOWN, LEFT, RIGHT};
+
+typedef enum direction direction;
+
+typedef struct position{
+    int x;
+    int y;
+} position;
+
+
+typedef struct player{
+    direction dir;
+    position pos;
+    uint64_t color;
+} player;
+
+#endif
