@@ -2,8 +2,8 @@
 
 #define REGISTERS_QTY 20
 
-#define castToColor(c) ((Color){ (uint8_t)(((c) >> 16) & 0xFF), (uint8_t)(((c) >> 8)  & 0xFF), (uint8_t)((c) & 0xFF)})
-
+#define castToColor(c) ((Color){ (uint8_t)(((uint64_t)(c) >> 16) & 0xFF), (uint8_t)(((uint64_t)(c) >> 8)  & 0xFF), (uint8_t)((uint64_t)(c) & 0xFF) })
+    
 uint64_t registersArray[REGISTERS_QTY];
 uint64_t registersArrayAux[REGISTERS_QTY];
 

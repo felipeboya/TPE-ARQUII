@@ -32,11 +32,11 @@ char * numToString(uint64_t num, uint64_t base) {
 }
 
 int64_t puts(const char * str) {
-    return sys_write(STDOUT, str, strlen(str));
+    return write(STDOUT, str);
 }
 
 int64_t fputc(char c, uint64_t fd) {
-    return sys_write(fd, &c, 1) == OK;
+    return write(fd, &c) == OK;
 }
 
 static int64_t vfprintf(uint64_t fd, const char *fmt, va_list args) {

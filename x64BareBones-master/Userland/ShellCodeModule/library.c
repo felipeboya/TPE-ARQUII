@@ -21,7 +21,7 @@ uint64_t clearScreen(){
     return sys_clear_screen();
 }
 
-uint64_t putPixel(uint64_t x, uint64_t y, Color color){
+uint64_t putPixel(uint64_t x, uint64_t y, uint64_t color){
     return sys_put_pixel(x, y, color);
 }
 
