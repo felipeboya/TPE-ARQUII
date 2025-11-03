@@ -1,6 +1,4 @@
 #include <shell.h>
-#include <library.h>
-#include <utils.h>
 
 #define COMMANDS_QUANTITY 8
 
@@ -17,9 +15,12 @@ Command commands[COMMANDS_QUANTITY] = {
     {"beep", "Make a sound", beepFunction},
 };
 
+static void toUtcMinus3(timeStructPtr time);
 static char getChar();
 static void extractCommand(const char * buffer, char * command);
 static void newLine();
+
+// Shell Functions
 
 void printPrompt(){
     char prompt[] = "$> ";  
@@ -68,7 +69,7 @@ void execute(const char * entry){
     write(STDOUT, "Shell: Command not found");
 }
 
-// Commands
+// Command Functions
 void helpFunction(){
     write(STDOUT, "Use any of the following commands: \n");
     for(uint64_t i = 0; i < COMMANDS_QUANTITY; i++){
@@ -85,13 +86,47 @@ void clearFunction(){
 }
 
 void registersFunction(){
+    CpuSnapshotPtr registers;
+    getSnapshot(registers);
+    //printSnapshot(registers);
 }
 
 void timeFunction(){
-
+    timeStruct time;
+    sys_get_time(&time);
+    toUtcMinus3(&time);
+    printf("%d/%d/%d\n", time.day, time.month, time.year);
+    int64_t h = time.hour;
+    printf("%d:%d:%d (Argentina)", h, time.minutes, time.seconds);
 }
 
-// Faltan syscalls de zoomIn y zoomOut
+static void toUtcMinus3(timeStructPtr time){
+    if (time->hour < 3){
+        time->hour += 21;
+        time->day--;
+        if (time->day == 0){
+            time->month--;
+            if (time->month == 0){
+                time->month = 12;
+                time->year--;
+            }
+            if(time->month == 2){
+                time->day = 28;
+                if(time->year % 4 == 0){
+                    time->day = 29;
+                }
+            } else if(time->month == 4 || time->month == 6 || time->month == 9 || time->month == 11){
+                time->day = 30;
+            } else{
+                time->day = 31;
+            }
+        }
+    }
+    else{
+        time->hour = time->hour - 3;
+    }
+}
+
 void zoomInFunction(){
     fontSize++;
     setFontSize(fontSize);
@@ -115,8 +150,7 @@ void beepFunction(){
     playSound(440, 20);
 }
 
-//Static
-
+// Static Functions
 static char getChar(){
     char c;
     while ( read(STDIN, &c, 1) == 0 || c > MAX_ASCII ){
@@ -139,4 +173,15 @@ static void extractCommand(const char * buffer, char * command){
 
 static void newLine(){
     write(STDOUT, "\n");
+}
+
+void reverse(char *str, int len) {
+    int i = 0, j = len - 1;
+    while (i < j) {
+        char temp = str[i];
+        str[i] = str[j];
+        str[j] = temp;
+        i++;
+        j--;
+    }
 }

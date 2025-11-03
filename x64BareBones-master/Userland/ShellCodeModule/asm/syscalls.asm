@@ -11,6 +11,7 @@ GLOBAL sys_sleep
 GLOBAL sys_play_sound
 GLOBAL sys_get_time
 GLOBAL sys_get_screen_info
+GLOBAL sys_draw_line
 
 section .text
 
@@ -64,3 +65,6 @@ sys_get_time:
 
 sys_get_screen_info:
     syscall 0xC
+
+sys_draw_line
+    syscall 0xD

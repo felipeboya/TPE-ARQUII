@@ -2,6 +2,7 @@
 #define LIBRARY_H
 
 #include <stdint.h>
+#include <utils.h>
 #include <status.h>
 
 #define TEXT_MODE 0
@@ -41,7 +42,7 @@ typedef struct ScreenInformation * screenInfoPtr;
 
 uint64_t read(uint64_t fd, char * buffer, uint64_t count);
 uint64_t write(uint64_t fd, const char * s);
-uint64_t snapshot(CpuSnapshotPtr snapshot);
+uint64_t getSnapshot(CpuSnapshotPtr snapshot);
 uint64_t setFontSize(uint64_t size);
 uint64_t clearScreen();
 uint64_t putPixel(uint64_t x, uint64_t y, Color color);
@@ -52,6 +53,6 @@ uint64_t sleep(uint64_t sleepTicks);
 uint64_t playSound(uint64_t frequency, uint64_t time);
 uint64_t getTime(timeStructPtr time);
 uint64_t getScreenInfo(screenInfoPtr screenInformation);
-
+uint64_t drawLine(uint64_t x, uint64_t y, uint64_t width, uint64_t color);
 
 #endif

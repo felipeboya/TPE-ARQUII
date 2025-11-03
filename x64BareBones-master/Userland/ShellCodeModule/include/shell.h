@@ -1,6 +1,9 @@
 #ifndef SHELL_H
 #define SHELL_H
 
+#include <library.h>
+#include <utils.h>
+
 #define BUFF_SIZE  125
 #define MAX_ASCII 255
 

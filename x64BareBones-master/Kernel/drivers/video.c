@@ -1,5 +1,4 @@
 #include <video.h>
-#include <font.h>
 
 #define SCREEN_WIDTH vbeModeInfo->width
 #define SCREEN_HEIGHT vbeModeInfo->height
@@ -100,6 +99,11 @@ uint64_t drawFont(uint64_t x, uint64_t y, uint64_t ch, Color color, uint64_t siz
         }
     }
     return OK;
+}
+
+// MODO VIDEO
+uint64_t drawLine(uint64_t x, uint64_t y, uint64_t width, Color color){
+    drawRectangle(x, y, width, 1, color);
 }
 
 // MODO TEXTO

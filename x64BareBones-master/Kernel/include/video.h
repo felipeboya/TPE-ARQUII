@@ -2,6 +2,7 @@
 #define VIDEODRIVER_H
 
 #include <stdint.h>
+#include <font.h>
 #include <status.h>
 
 #define TEXT_MODE 0
@@ -67,6 +68,7 @@ typedef struct ScreenInformation * screenInfoPtr;
 uint64_t putPixel(uint64_t x, uint64_t y, Color color);
 uint64_t drawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, Color color);
 uint64_t drawFont(uint64_t x, uint64_t y, uint64_t ch, Color color, uint64_t size);
+uint64_t drawLine(uint64_t x, uint64_t y, uint64_t width, Color color);
 uint64_t setFontSize(uint64_t size);
 void setFontColor(Color c);
 uint64_t textWrite(uint64_t fd, const char * buffer, int64_t amount);

@@ -2,6 +2,7 @@
 #define AUDIO_DRIVER_H
 
 #include <stdint.h>
+#include <time.h>
 
 #define PIT_FREQUENCY 1193182
 

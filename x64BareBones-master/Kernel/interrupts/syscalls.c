@@ -1,9 +1,4 @@
 #include <syscalls.h>
-#include <status.h>
-#include <video.h>
-#include <keyboard.h>
-#include <audio.h>
-#include <snapshot.h>
 
 #define REGISTERS_QTY 20
 
@@ -25,6 +20,7 @@ static uint64_t _sleep(uint64_t sleepTicks);
 static uint64_t _playSound(uint64_t frequency, uint64_t time);
 static uint64_t _getTime(timeStructPtr time);
 static uint64_t _getScreenInfo(screenInfoPtr screenInformation);
+static uint64_t _drawLine(uint64_t x, uint64_t y, uint64_t width, uint64_t color);
 
 uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6){
     switch(syscall_id){
@@ -54,6 +50,8 @@ uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, ui
             return _getTime((timeStructPtr) arg1);
         case SYS_GET_SCREEN_INFO :
             return _getScreenInfo((screenInfoPtr) arg1);
+        case SYS_DRAW_LINE : 
+            return _drawLine(arg1, arg2, arg3, arg4);
         default :
             return ERROR;
     }
@@ -74,7 +72,7 @@ static uint64_t _read(uint64_t fd, char * buffer, uint64_t amount){
     return i;
 }
 
- uint64_t _textWrite(uint64_t fd, const char * buffer, uint64_t amount){
+static uint64_t _textWrite(uint64_t fd, const char * buffer, uint64_t amount){
     return textWrite(fd, buffer, amount);
 }
 
@@ -154,4 +152,14 @@ static uint64_t _getTime(timeStructPtr time){
 
 static uint64_t _getScreenInfo(screenInfoPtr screenInformation){
     return getScreenInfo(screenInformation);
+}
+
+static uint64_t _drawLine(uint64_t x, uint64_t y, uint64_t width, uint64_t color){
+    return drawLine(x, y, width, castToColor(color));
+}
+
+void snapshot(void){
+    for ( int i = 0; i < REGISTERS_QTY; i++ ){
+        registersArray[i] = registersArrayAux[i];
+    }
 }

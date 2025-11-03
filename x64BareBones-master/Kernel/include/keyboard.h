@@ -1,6 +1,11 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
+#include <video.h>
+#include <naiveConsole.h>
+#include <lib.h>
+#include <snapshot.h>
+
 // Tamaño de los arrays de scancodes
 #define SCANCODE_MAP_SIZE 256
 
@@ -21,6 +26,7 @@
 #define CAPS_LOCK         0x3A
 #define LEFT_SHIFT        0x2A
 #define RIGHT_SHIFT       0x36
+#define F1                0x3B
 
 void keyboardHandler();
 

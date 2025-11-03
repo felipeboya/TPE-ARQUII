@@ -1,7 +1,4 @@
 #include <keyboard.h>
-#include <video.h>
-#include <naiveConsole.h>
-#include <lib.h>
 
 typedef struct {
     uint8_t keysBuffer[BUFFER_DIM];   // (buffer circular)
@@ -26,7 +23,7 @@ void keyboardHandler() {
     uint8_t scancode = getScancode();
 
     uint8_t c = handleKey(scancode);
-    if( c == 0 ){   
+    if( c == KC_NONE ){   
         return;
     }
 
@@ -119,7 +116,8 @@ static const uint8_t scancodesMap[SCANCODE_MAP_SIZE] = {
     [0x38] = KC_NONE,    // Alt
     [0x39] = KC_SPACE,
     [0x3A] = KC_NONE,    // Caps Lock
-    [0x3B] = KC_NONE, [0x3C] = KC_NONE, [0x3D] = KC_NONE, [0x3E] = KC_NONE,
+    [0x3B] = KC_NONE,    // F1
+    [0x3C] = KC_NONE, [0x3D] = KC_NONE, [0x3E] = KC_NONE,
     [0x3F] = KC_NONE, [0x40] = KC_NONE, [0x41] = KC_NONE, [0x42] = KC_NONE,
     [0x43] = KC_NONE, [0x44] = KC_NONE, [0x45] = KC_NONE, [0x46] = KC_NONE,
     [0x47] = '7', [0x48] = '8', [0x49] = '9', [0x4A] = '-', [0x4B] = '4',
@@ -166,6 +164,11 @@ uint8_t handleKey(uint8_t scancode){
             shift_pressed = 0;
         }
         return 0;
+    }
+    
+    if (scancode == F1){
+        snapshot();
+        return;
     }
     
     switch (scancode) {

@@ -5,7 +5,6 @@
 #ifndef _defs_
 #define _defs_
 
-
 /* Flags para derechos de acceso de los segmentos */
 #define ACS_PRESENT     0x80            /* segmento presente en memoria */
 #define ACS_CSEG        0x18            /* segmento de codigo */

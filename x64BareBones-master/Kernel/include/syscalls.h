@@ -2,6 +2,11 @@
 #define SYSCALLS_H
 
 #include <stdint.h>
+#include <status.h>
+#include <video.h>
+#include <keyboard.h>
+#include <audio.h>
+#include <snapshot.h>
 
 // System Calls: https://syscalls64.paolostivanin.com/
 
@@ -18,6 +23,7 @@
 #define SYS_PLAY_SOUND 0xA
 #define SYS_GET_TIME 0xB
 #define SYS_GET_SCREEN_INFO 0xC
+#define SYS_DRAW_LINE 0xD
 
 typedef struct {
     uint8_t year;

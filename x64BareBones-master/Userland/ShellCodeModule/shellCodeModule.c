@@ -1,6 +1,5 @@
 #include <library.h>
 #include <shell.h>
-#include <stdlib.h>
 
 static int var1 = 0;
 static int var2 = 0;

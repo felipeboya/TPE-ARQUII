@@ -1,6 +1,4 @@
 #include <time.h>
-#include <lib.h>
-
 
 #define TICKS_PER_SEC 18
 

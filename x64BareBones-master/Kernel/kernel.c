@@ -4,10 +4,8 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <idtLoader.h>
-
 #include <keyboard.h>
 #include <video.h>
-
 #include <syscalls.h>
 
 extern uint8_t text;

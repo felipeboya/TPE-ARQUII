@@ -1,5 +1,4 @@
 #include <utils.h>
-#include <status.h>
 
 uint64_t strlen(const char *s) {
     uint64_t i = 0;
@@ -19,4 +18,90 @@ uint64_t strcmp(const char * str1, const char * str2) {
         i++;
     }
     return str1[i] - str2[i];
+}
+
+char * numToString(uint64_t num, uint64_t base) {
+    static char buffer[64];
+    char * ptr = &buffer[63];
+    *ptr = '\0';
+    do {
+        *--ptr = "0123456789abcdef"[num % base];
+        num /= base;
+    } while(num != 0);
+    return ptr;
+}
+
+int64_t puts(const char * str) {
+    return sys_write(STDOUT, str, strlen(str));
+}
+
+int64_t fputc(char c, uint64_t fd) {
+    return sys_write(fd, &c, 1) == OK;
+}
+
+static int64_t vfprintf(uint64_t fd, const char *fmt, va_list args) {
+    uint64_t flag = 0;
+    uint64_t written = 0;
+
+    for (uint64_t i = 0; fmt[i] != '\0'; i++) {
+        if (fmt[i] == '%' && !flag) {
+            flag = 1;
+            i++;
+        }
+
+        if (!flag) {
+            fputc(fmt[i], fd);
+            flag = 0;
+            written++;
+            continue;
+        }
+
+        switch (fmt[i]) {
+            case 'c':
+                fputc(va_arg(args, int), fd);
+                written++;
+                break;
+            case 'd':
+                written += vfprintf(fd, numToString(va_arg(args, uint64_t), 10), args);
+                break;
+            case 'x':
+                written += vfprintf(fd, "0x", args);
+                written += vfprintf(fd, numToString(va_arg(args, uint64_t), 16), args);
+                break;
+            case 's':
+                written += vfprintf(fd, va_arg(args, char *), args);
+                break;
+            case '%':
+                fputc('%', fd);
+                written++;
+                break;
+            default:
+                return -1;
+        }
+
+        flag = 0;
+    }
+
+    return written;
+}
+
+// fprintf and printf were copied from this website http://www.firmcodes.com/write-printf-function-c/
+int64_t fprintf(uint64_t fd, const char * fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    int64_t out = vfprintf(fd, fmt, args);
+
+    va_end(args);
+    return out;
+}
+
+int64_t printf(const char * fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    int64_t out = vfprintf(STDOUT, fmt, args);
+
+    va_end(args);
+    return out;
 }

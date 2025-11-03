@@ -11,4 +11,6 @@ typedef struct {
 
 typedef CpuSnapshot * CpuSnapshotPtr;
 
+void snapshot(void);
+
 #endif
