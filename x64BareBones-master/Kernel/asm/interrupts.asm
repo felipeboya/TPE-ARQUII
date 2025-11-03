@@ -15,6 +15,7 @@ GLOBAL _irq05Handler
 GLOBAL _int80Handler
 
 GLOBAL _exception0Handler
+GLOBAL _exception6Handler
 
 EXTERN irqDispatcher
 EXTERN syscallDispatcher
@@ -221,6 +222,9 @@ _int80Handler:
 _exception0Handler:
 	exceptionHandler 0
 
+_exception6Handler:
+	exceptionHandler 6
+
 haltcpu:
 	cli
 	hlt
@@ -228,3 +232,4 @@ haltcpu:
 
 SECTION .bss
 	aux resq 1
+	registersArrayAux resq 20
