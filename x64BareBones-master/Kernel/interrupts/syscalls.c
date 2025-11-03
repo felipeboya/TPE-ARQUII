@@ -6,6 +6,7 @@
 
 uint64_t registersArray[REGISTERS_QTY];
 uint64_t registersArrayAux[REGISTERS_QTY];
+uint64_t registersArrayException[REGISTERS_QTY];
 
 static uint64_t _read(uint64_t fd, char * buffer, uint64_t amount);
 static uint64_t _textWrite(uint64_t fd, const char * buffer, uint64_t amount);

@@ -11,6 +11,10 @@ typedef struct {
 
 typedef CpuSnapshot * CpuSnapshotPtr;
 
+extern uint64_t registersArray[REGISTERS_QTY];
+extern uint64_t registersArrayAux[REGISTERS_QTY];
+extern uint64_t registersArrayException[REGISTERS_QTY];
+
 void snapshot(void);
 
 #endif

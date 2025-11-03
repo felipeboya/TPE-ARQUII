@@ -22,6 +22,7 @@ EXTERN syscallDispatcher
 EXTERN exceptionDispatcher
 
 EXTERN registersArrayAux
+EXTERN registersArrayException
 
 SECTION .text
 
@@ -93,12 +94,41 @@ SECTION .text
 %endmacro
 
 %macro exceptionHandler 1
+	cli
 	pushState
+	; guardamos los valores de los registros generales
+	mov [registersArrayException], rax
+    mov [registersArrayException + 8*1], rbx      ; rbx
+    mov [registersArrayException + 8*2], rcx      ; rcx
+    mov [registersArrayException + 8*3], rdx      ; rdx
+    mov [registersArrayException + 8*4], rbp      ; rsi
+    mov [registersArrayException + 8*5], rdi      ; rdi
+    mov [registersArrayException + 8*6], rsi      ; rbp
+    mov [registersArrayException + 8*7], r8       ; r8
+    mov [registersArrayException + 8*8], r9       ; r9
+    mov [registersArrayException + 8*9], r10      ; r10
+    mov [registersArrayException + 8*10], r11     ; r11
+    mov [registersArrayException + 8*11], r12     ; r12
+    mov [registersArrayException + 8*12], r13     ; r13
+    mov [registersArrayException + 8*13], r14     ; r14
+    mov [registersArrayException + 8*14], r15     ; r15
+
+    mov rax, [rsp + 8*15]                    ; RIP guardado por la CPU
+    mov [registersArrayException + 8*15], rax      
+	mov rax, [rsp + 8*16]					; CS guardado por la CPU
+	mov [registersArrayException + 8*16], rax      
+	mov rax, [rsp + 8*17] 				  	; RFLAGS guardado por la CPU
+	mov [registersArrayException + 8*17], rax		  
+	mov rax, [rsp + 8*18]				   	; RSP guardado por la CPU
+	mov [registersArrayException + 8*18], rax    
+	mov rax, [rsp + 8*19]					; SS guardado por la CPU
+	mov [registersArrayException + 8*19], rax 
 
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
 	popState
+	sti
 	iretq
 %endmacro
 
@@ -232,4 +262,3 @@ haltcpu:
 
 SECTION .bss
 	aux resq 1
-	registersArrayAux resq 20
