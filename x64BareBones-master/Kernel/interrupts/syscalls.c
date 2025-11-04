@@ -7,7 +7,7 @@
 uint64_t registersArray[REGISTERS_QTY];
 uint64_t registersArrayAux[REGISTERS_QTY];
 
-static uint64_t _read(uint64_t fd, char * buffer, uint64_t amount);
+uint64_t _read(uint64_t fd, char * buffer, uint64_t amount);
 static uint64_t _textWrite(uint64_t fd, const char * buffer, uint64_t amount);
 static uint64_t _registersSnapshot(CpuSnapshotPtr snapshot);
 static uint64_t _setFontSize(uint64_t size);
@@ -58,7 +58,7 @@ uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, ui
 }
 
 // Lee el buffer cargado por el driver de teclado (keysBuffer)
-static uint64_t _read(uint64_t fd, char * buffer, uint64_t amount){
+uint64_t _read(uint64_t fd, char * buffer, uint64_t amount){
     if ( fd != STDIN ){
         return ERROR;
     }

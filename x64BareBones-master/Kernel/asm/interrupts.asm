@@ -15,13 +15,15 @@ GLOBAL _irq05Handler
 GLOBAL _int80Handler
 
 GLOBAL _exception0Handler
-; GLOBAL _exception6Handler
+GLOBAL _exception6Handler
 
 EXTERN irqDispatcher
 EXTERN syscallDispatcher
 EXTERN exceptionDispatcher
+EXTERN getStackBase
 
 EXTERN registersArrayAux
+EXTERN registersArrayExceptions
 
 SECTION .text
 
@@ -93,13 +95,50 @@ SECTION .text
 %endmacro
 
 %macro exceptionHandler 1
+	cli
 	pushState
 
-	mov rdi, %1 ; pasaje de parametro
+	; guardamos los valores de los registros generales
+	mov [registersArrayExceptions], rax
+    mov [registersArrayExceptions + 8*1], rbx      
+    mov [registersArrayExceptions + 8*2], rcx  
+    mov [registersArrayExceptions + 8*3], rdx      
+    mov [registersArrayExceptions + 8*4], rbp      
+    mov [registersArrayExceptions + 8*5], rdi      
+    mov [registersArrayExceptions + 8*6], rsi    
+    mov [registersArrayExceptions + 8*7], r8
+    mov [registersArrayExceptions + 8*8], r9
+    mov [registersArrayExceptions + 8*9], r10
+    mov [registersArrayExceptions + 8*10], r11
+    mov [registersArrayExceptions + 8*11], r12
+    mov [registersArrayExceptions + 8*12], r13
+    mov [registersArrayExceptions + 8*13], r14
+    mov [registersArrayExceptions + 8*14], r15
+
+    mov rax, [rsp + 8*1]                    ; RIP guardado por la CPU
+    mov [registersArrayExceptions + 8*15], rax      
+	mov rax, [rsp + 8*2]					; CS guardado por la CPU
+	mov [registersArrayExceptions + 8*16], rax      
+	mov rax, [rsp + 8*3] 				  	; RFLAGS guardado por la CPU
+	mov [registersArrayExceptions + 8*17], rax		  
+	mov rax, [rsp + 8*4]				   	; RSP guardado por la CPU
+	mov [registersArrayExceptions + 8*18], rax    
+	mov rax, [rsp + 8*5]					; SS guardado por la CPU
+	mov [registersArrayExceptions + 8*19], rax
+
+	mov rdi, %1                             ; Parametros para exceptionDispatcher
+	mov rsi, registersArrayExceptions
+
 	call exceptionDispatcher
 
 	popState
-	iretq
+    call getStackBase
+	mov [rsp+24], rax ; El StackBase
+    mov rax, userland
+    mov [rsp], rax ; PISO la dirección de retorno
+
+    sti
+    iretq
 %endmacro
 
 _hlt:
@@ -148,20 +187,20 @@ _irq01Handler:
 
 	; guardamos los valores de los registros generales
 	mov [registersArrayAux], rax
-    mov [registersArrayAux + 8*1], rbx      ; rbx
-    mov [registersArrayAux + 8*2], rcx      ; rcx
-    mov [registersArrayAux + 8*3], rdx      ; rdx
-    mov [registersArrayAux + 8*4], rbp      ; rsi
-    mov [registersArrayAux + 8*5], rdi      ; rdi
-    mov [registersArrayAux + 8*6], rsi      ; rbp
-    mov [registersArrayAux + 8*7], r8       ; r8
-    mov [registersArrayAux + 8*8], r9       ; r9
-    mov [registersArrayAux + 8*9], r10      ; r10
-    mov [registersArrayAux + 8*10], r11     ; r11
-    mov [registersArrayAux + 8*11], r12     ; r12
-    mov [registersArrayAux + 8*12], r13     ; r13
-    mov [registersArrayAux + 8*13], r14     ; r14
-    mov [registersArrayAux + 8*14], r15     ; r15
+    mov [registersArrayAux + 8*1], rbx
+    mov [registersArrayAux + 8*2], rcx
+    mov [registersArrayAux + 8*3], rdx
+    mov [registersArrayAux + 8*4], rbp
+    mov [registersArrayAux + 8*5], rdi
+    mov [registersArrayAux + 8*6], rsi
+    mov [registersArrayAux + 8*7], r8
+    mov [registersArrayAux + 8*8], r9
+    mov [registersArrayAux + 8*9], r10
+    mov [registersArrayAux + 8*10], r11
+    mov [registersArrayAux + 8*11], r12
+    mov [registersArrayAux + 8*12], r13
+    mov [registersArrayAux + 8*13], r14
+    mov [registersArrayAux + 8*14], r15
 
     mov rax, [rsp + 8*1]                    ; RIP guardado por la CPU
     mov [registersArrayAux + 8*15], rax      
@@ -222,14 +261,13 @@ _int80Handler:
 _exception0Handler:
 	exceptionHandler 0
 
-; _exception6Handler:
-;	exceptionHandler 6
+_exception6Handler:
+	exceptionHandler 6
 
 haltcpu:
 	cli
 	hlt
 	ret
 
-SECTION .bss
-	aux resq 1
-	; registersArrayAux resq 20
+SECTION .rodata
+	userland equ 0x400000

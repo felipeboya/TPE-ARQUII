@@ -19,7 +19,7 @@ void playTron(){
     setMode(VIDEO_MODE, 0);
     welcome();
     clearScreen();
-    //printCenteredString(512, 384,"Saliendoo",3);
+    printCenteredString(512, 384,"Saliendoo",3);
     // playSound(100,5);
     // playSound(50,5);
     setMode(TEXT_MODE, 0);
