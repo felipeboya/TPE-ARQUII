@@ -107,13 +107,13 @@ int64_t printf(const char * fmt, ...) {
 }
 
 void printSnapshot() {
-    CpuSnapshot snap;
-    if(!getSnapshot(&snap)) {
-        fprintf(STDERR, "No register snapshot available. Press ` to take a snapshot.\n");
+    CpuSnapshot snap = {0};
+    if(getSnapshot(&snap) == ERROR) {
+        fprintf(STDERR, "No registers snapshot available. Press ` to take a snapshot.\n");
         return;
     }
 
-    puts("Register snapshot:\n");
+    puts("Registers snapshot:\n");
     printf(" RAX: %x\n", snap.rax);
     printf(" RBX: %x\n", snap.rbx);
     printf(" RCX: %x\n", snap.rcx);

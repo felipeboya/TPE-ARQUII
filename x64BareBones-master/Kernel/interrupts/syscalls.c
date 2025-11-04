@@ -6,6 +6,7 @@
     
 uint64_t registersArray[REGISTERS_QTY];
 uint64_t registersArrayAux[REGISTERS_QTY];
+static uint8_t snapshotAvailable = 0;
 
 uint64_t _read(uint64_t fd, char * buffer, uint64_t amount);
 static uint64_t _textWrite(uint64_t fd, const char * buffer, uint64_t amount);
@@ -76,8 +77,15 @@ static uint64_t _textWrite(uint64_t fd, const char * buffer, uint64_t amount){
     return textWrite(fd, buffer, amount);
 }
 
+void snapshot(void){
+    for ( int i = 0; i < REGISTERS_QTY; i++ ){
+        registersArray[i] = registersArrayAux[i];
+    }
+    snapshotAvailable = 1;
+}
+
 static uint64_t _registersSnapshot(CpuSnapshotPtr snapshot){
-    if ( snapshot == NULL ){
+    if ( snapshot == NULL || !snapshotAvailable){
         return ERROR;
     }
     
@@ -101,9 +109,10 @@ static uint64_t _registersSnapshot(CpuSnapshotPtr snapshot){
     snapshot->rflags = registersArray[17];
     snapshot->rsp    = registersArray[18];
     snapshot->ss     = registersArray[19];
-
+    
     return OK;
 }
+
 
 static uint64_t _setFontSize(uint64_t size){
     return setFontSize(size);
@@ -156,10 +165,4 @@ static uint64_t _getScreenInfo(screenInfoPtr screenInformation){
 
 static uint64_t _drawLine(uint64_t x, uint64_t y, uint64_t width, uint64_t color){
     return drawLine(x, y, width, castToColor(color));
-}
-
-void snapshot(void){
-    for ( int i = 0; i < REGISTERS_QTY; i++ ){
-        registersArray[i] = registersArrayAux[i];
-    }
 }
