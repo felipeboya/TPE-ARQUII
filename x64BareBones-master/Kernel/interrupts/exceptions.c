@@ -8,7 +8,7 @@
 #define ZERO_EXCEPTION_MESSAGE "Division Error.\n"
 #define SIX_EXCEPTION_MESSAGE "Invalid Opcode.\n"
 
-extern void picMasterMask(uint16_t mask);
+
 static void zeroDivision();
 static void printRegs();
 static void printExceptionMessage();
