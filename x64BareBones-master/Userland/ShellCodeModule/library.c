@@ -41,8 +41,8 @@ uint64_t sleep(uint64_t sleepTicks){
     return sys_sleep(sleepTicks);
 }
 
-uint64_t playSound(uint64_t frequency, uint64_t time){
-    return sys_play_sound(frequency, time);
+uint64_t beep(uint64_t frequency, uint64_t time){
+    return sys_beep(frequency, time);
 }
 
 uint64_t getTime(timeStructPtr time){

@@ -20,7 +20,7 @@
 #define SYS_DRAW_FONT 0x7
 #define SYS_SET_MODE 0x8
 #define SYS_SLEEP 0x9
-#define SYS_PLAY_SOUND 0xA
+#define SYS_BEEP 0xA
 #define SYS_GET_TIME 0xB
 #define SYS_GET_SCREEN_INFO 0xC
 #define SYS_DRAW_LINE 0xD

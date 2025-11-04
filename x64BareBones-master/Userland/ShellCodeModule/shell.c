@@ -143,9 +143,8 @@ void tronFunction(){
     playTron();
 }
 
-//  NO ANDA
 void beepFunction(){
-    playSound(440, 20);
+    beep(440, 20);
 }
 
 char getChar(){

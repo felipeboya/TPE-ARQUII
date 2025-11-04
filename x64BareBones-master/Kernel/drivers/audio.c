@@ -5,10 +5,7 @@
 
 #include <audio.h>
 
-extern void outb(uint16_t port, uint8_t value);
-extern uint8_t inb(uint16_t port);
-
-void playSound(uint32_t f) {
+static void playSound(uint32_t f) {
     uint32_t div = PIT_FREQUENCY / f;
 
     outb(0x43, 0xB6); // Channel 2: 0x42, square wave generator
@@ -22,7 +19,7 @@ void playSound(uint32_t f) {
     return;   
 }
 
-void noSound() {
+static void noSound() {
     uint8_t tmp = inb(0x61) & 0xFC;
     outb(0x61, tmp);
     return;

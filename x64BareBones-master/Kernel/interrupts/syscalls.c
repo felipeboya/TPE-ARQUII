@@ -18,7 +18,7 @@ static uint64_t _drawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t 
 static uint64_t _drawFont(uint64_t x, uint64_t y, uint64_t ch, uint64_t color, uint64_t size);
 static uint64_t _setMode(uint64_t mode, uint64_t color);
 static uint64_t _sleep(uint64_t sleepTicks);
-static uint64_t _playSound(uint64_t frequency, uint64_t time);
+static uint64_t _beep(uint64_t frequency, uint64_t time);
 static uint64_t _getTime(timeStructPtr time);
 static uint64_t _getScreenInfo(screenInfoPtr screenInformation);
 static uint64_t _drawLine(uint64_t x, uint64_t y, uint64_t width, uint64_t color);
@@ -45,8 +45,8 @@ uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, ui
             return _setMode(arg1, arg2);
         case SYS_SLEEP :
             return _sleep(arg1);
-        case SYS_PLAY_SOUND :
-            return _playSound(arg1, arg2);
+        case SYS_BEEP :
+            return _beep(arg1, arg2);
         case SYS_GET_TIME :
             return _getTime((timeStructPtr) arg1);
         case SYS_GET_SCREEN_INFO :
@@ -144,7 +144,7 @@ static uint64_t _sleep(uint64_t sleepTicks){
     return OK;
 }
 
-static uint64_t _playSound(uint64_t frequency, uint64_t time){
+static uint64_t _beep(uint64_t frequency, uint64_t time){
     beep(frequency, time);
     return OK;
 }

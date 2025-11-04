@@ -25,8 +25,8 @@ void playTron(){
     clearScreen();
     printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Saliendo!",3, GREEN);
     sleep(20);
-    // playSound(100,5);
-    // playSound(50,5);
+    beep(100,5);
+    beep(50,5);
     setMode(TEXT_MODE, 0);
     return;
 }
@@ -35,7 +35,7 @@ void welcome(){
     clearScreen();
     printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Bienvenido al Tron!",3, GREEN);
     sleep(20);
-    // playArcadeSong();
+    playArcadeSong();
     clearScreen();
 
     printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-100,"Elija el modo de juego: (Presione la tecla correspondiente)",2, GREEN);
@@ -315,10 +315,10 @@ static void playArcadeSong() {
     int eighth_note = quarter_note / 3;
 
     // Play the song.
-    playSound(C4, eighth_note);
-    playSound(E4, eighth_note);
-    playSound(G4, eighth_note);
-    playSound(C5, eighth_note);
+    beep(C4, eighth_note);
+    beep(E4, eighth_note);
+    beep(G4, eighth_note);
+    beep(C5, eighth_note);
 }
 
 static void initializeMap(){

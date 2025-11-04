@@ -8,7 +8,7 @@ GLOBAL sys_draw_rectangle
 GLOBAL sys_draw_font
 GLOBAL sys_set_mode
 GLOBAL sys_sleep
-GLOBAL sys_play_sound
+GLOBAL sys_beep
 GLOBAL sys_get_time
 GLOBAL sys_get_screen_info
 GLOBAL sys_draw_line
@@ -57,7 +57,7 @@ sys_set_mode:
 sys_sleep:
     syscall 9
 
-sys_play_sound:
+sys_beep:
     syscall 0xA
 
 sys_get_time:
