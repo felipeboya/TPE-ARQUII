@@ -8,7 +8,7 @@
 
 void playSound(uint32_t f);
 
-void stopSound();
+void noSound();
 
 void beep(uint64_t freq, uint64_t time);
 
