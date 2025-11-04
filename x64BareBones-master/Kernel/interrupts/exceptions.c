@@ -8,7 +8,7 @@
 #define ZERO_EXCEPTION_MESSAGE "Division Error.\n"
 #define SIX_EXCEPTION_MESSAGE "Invalid Opcode.\n"
 
-
+extern void picMasterMask(uint16_t mask);
 static void zeroDivision();
 static void printRegs();
 static void printExceptionMessage();
@@ -17,6 +17,8 @@ static char * numToString(uint64_t num, uint64_t base);
 static void emptyKeyboardBuffer();
 
 void exceptionDispatcher(uint64_t exception) {
+	Color color = {0, 0, 0};
+    colorClearScreen(color);
 	printRegs();
 
 	if (exception == ZERO_EXCEPTION_ID){
@@ -31,11 +33,12 @@ void exceptionDispatcher(uint64_t exception) {
     picMasterMask(0xFD);    // Solo IRQ1 (teclado)
     _sti();
     emptyKeyboardBuffer();
-    waitToReturn();           // se bloquea c/ hlt hasta recibir un byte
+    getKey();           // se bloquea c/ hlt hasta recibir un byte
     _cli();
-    picMasterMask(DEFAULT_MASTER_MASK);
-	flushKeyboardBuffer();
-    empty_screen((Color){0,0,0});
+    picMasterMask(0xFC);
+	emptyKeyboardBuffer();
+    colorClearScreen(color);
+	return;
 }
 
 static void zeroDivision() {
@@ -44,8 +47,6 @@ static void zeroDivision() {
 
 static void printRegs(){
 	char * regs[] = {"RAX", "RBX", "RCX", "RDX", "RBP", "RDI", "RSI", "R8", "R9", "R10", "R11", "R12", "R13", "R14", "R15", "RIP", "CS", "RFLAGS", "RSP", "SS"};
-	Color color = {0, 0, 0};
-    colorClearScreen(color);
 
 	const char newline = '\n';
 
@@ -84,4 +85,8 @@ static char * numToString(uint64_t num, uint64_t base) {
     return ptr;
 }
 
-static void emptyKeyboardBuffer();
+static void emptyKeyboardBuffer(){
+    uint8_t c;
+    while ((c = getChar()) != 0);
+	return;
+}

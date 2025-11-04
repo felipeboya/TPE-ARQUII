@@ -29,5 +29,6 @@
 #define F1                0x3B
 
 void keyboardHandler();
+uint8_t getChar();
 
 #endif

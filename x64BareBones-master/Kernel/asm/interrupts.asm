@@ -128,6 +128,10 @@ SECTION .text
 	call exceptionDispatcher
 
 	popState
+	call getStackBase
+    mov [rsp+24], rax
+    mov rax, userland
+    mov [rsp], rax
 	sti
 	iretq
 %endmacro
