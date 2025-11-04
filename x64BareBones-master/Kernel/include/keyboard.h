@@ -21,6 +21,8 @@
 #define KC_ESC    0x1B
 #define KC_SPACE  ' '
 
+#define DELTA ('a' - 'A')
+
 // Estados especiales
 #define UNPRESSED_BIT     0x80  // Bit que indica break code (tecla soltada)
 #define CAPS_LOCK         0x3A

@@ -33,5 +33,7 @@ void zoomOutFunction();
 void tronFunction();
 void beepFunction();
 void benchmarkFunction();
+void divZeroFunction();
+void invOpCodeFunction();
 
 #endif

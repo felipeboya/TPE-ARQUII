@@ -8,8 +8,6 @@
 #include <audio.h>
 #include <snapshot.h>
 
-// System Calls: https://syscalls64.paolostivanin.com/
-
 #define SYS_READ 0x0
 #define SYS_WRITE 0x1
 #define SYS_REGISTERS_SNAPSHOT 0x2
@@ -22,10 +20,8 @@
 #define SYS_SLEEP 0x9
 #define SYS_BEEP 0xA
 #define SYS_GET_TIME 0xB
-#define SYS_GET_SCREEN_INFO 0xC
-#define SYS_DRAW_LINE 0xD
-#define SYS_GET_TICKS 0xE
-#define SYS_GET_CPU_INFO 0xF
+#define SYS_GET_TICKS 0xC
+#define SYS_GET_CPU_INFO 0xD
 
 typedef struct {
     uint8_t year;

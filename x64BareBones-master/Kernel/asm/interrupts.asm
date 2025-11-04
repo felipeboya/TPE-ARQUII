@@ -21,7 +21,6 @@ EXTERN getStackBase
 EXTERN registersArrayAux
 EXTERN registersArrayExceptions
 
-
 SECTION .text
 
 %macro pushState 0
@@ -112,15 +111,15 @@ SECTION .text
     mov [registersArrayExceptions + 8*13], r14
     mov [registersArrayExceptions + 8*14], r15
 
-    mov rax, [rsp + 8*1]                    ; RIP guardado por la CPU
+    mov rax, [rsp + 8*15]                    ; RIP guardado por la CPU
     mov [registersArrayExceptions + 8*15], rax      
-	mov rax, [rsp + 8*2]					; CS guardado por la CPU
+	mov rax, [rsp + 8*16]					; CS guardado por la CPU
 	mov [registersArrayExceptions + 8*16], rax      
-	mov rax, [rsp + 8*3] 				  	; RFLAGS guardado por la CPU
+	mov rax, [rsp + 8*17] 				  	; RFLAGS guardado por la CPU
 	mov [registersArrayExceptions + 8*17], rax		  
-	mov rax, [rsp + 8*4]				   	; RSP guardado por la CPU
+	mov rax, [rsp + 8*18]				   	; RSP guardado por la CPU
 	mov [registersArrayExceptions + 8*18], rax    
-	mov rax, [rsp + 8*5]					; SS guardado por la CPU
+	mov rax, [rsp + 8*19]					; SS guardado por la CPU
 	mov [registersArrayExceptions + 8*19], rax
 
 	mov rdi, %1                             ; Parametros para exceptionDispatcher

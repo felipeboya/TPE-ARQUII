@@ -20,8 +20,7 @@ static uint64_t _setMode(uint64_t mode, uint64_t color);
 static uint64_t _sleep(uint64_t sleepTicks);
 static uint64_t _beep(uint64_t frequency, uint64_t time);
 static uint64_t _getTime(timeStructPtr time);
-static uint64_t _getScreenInfo(screenInfoPtr screenInformation);
-static uint64_t _drawLine(uint64_t x, uint64_t y, uint64_t width, uint64_t color);
+
 static uint64_t _getTicks();
 static uint64_t _getCpuInfo(cpuInfoPtr info);
 
@@ -51,10 +50,8 @@ uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, ui
             return _beep(arg1, arg2);
         case SYS_GET_TIME :
             return _getTime((timeStructPtr) arg1);
-        case SYS_GET_SCREEN_INFO :
-            return _getScreenInfo((screenInfoPtr) arg1);
-        case SYS_DRAW_LINE : 
-            return _drawLine(arg1, arg2, arg3, arg4);
+    
+     
         case SYS_GET_TICKS:
             return _getTicks();
         case SYS_GET_CPU_INFO:
@@ -119,7 +116,6 @@ static uint64_t _registersSnapshot(CpuSnapshotPtr snapshot){
     return OK;
 }
 
-
 static uint64_t _setFontSize(uint64_t size){
     return setFontSize(size);
 }
@@ -163,14 +159,6 @@ static uint64_t _getTime(timeStructPtr time){
     time->month = getRTCMonth();
     time->year = getRTCYear();
     return OK;
-}
-
-static uint64_t _getScreenInfo(screenInfoPtr screenInformation){
-    return getScreenInfo(screenInformation);
-}
-
-static uint64_t _drawLine(uint64_t x, uint64_t y, uint64_t width, uint64_t color){
-    return drawLine(x, y, width, castToColor(color));
 }
 
 static uint64_t _getTicks(){

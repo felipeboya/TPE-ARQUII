@@ -1,6 +1,6 @@
 #include <shell.h>
 
-#define COMMANDS_QUANTITY 9
+#define COMMANDS_QUANTITY 11
 
 static uint64_t fontSize = 1;
 
@@ -13,7 +13,9 @@ Command commands[COMMANDS_QUANTITY] = {
     {"zoomOut", "Zoom out the screen", zoomOutFunction},
     {"tron", "Play tron", tronFunction},
     {"beep", "Make a sound", beepFunction},
-    {"benchmark", "Run system benchmarks", benchmarkFunction}
+    {"benchmark", "Run system benchmarks", benchmarkFunction},
+    {"divZero", "Throw an exception (divide by zero)", divZeroFunction},
+    {"invOpCode", "Throw an exception (invalide op code)", invOpCodeFunction}
 };
 
 void execute(const char * entry);
@@ -101,33 +103,6 @@ void timeFunction(){
     printf("%d:%d:%d\n", h, time.minutes, time.seconds);
 }
 
-static void toUtcMinus3(timeStructPtr time){
-    if (time->hour < 3){
-        time->hour += 21;
-        time->day--;
-        if (time->day == 0){
-            time->month--;
-            if (time->month == 0){
-                time->month = 12;
-                time->year--;
-            }
-            if(time->month == 2){
-                time->day = 28;
-                if(time->year % 4 == 0){
-                    time->day = 29;
-                }
-            } else if(time->month == 4 || time->month == 6 || time->month == 9 || time->month == 11){
-                time->day = 30;
-            } else{
-                time->day = 31;
-            }
-        }
-    }
-    else{
-        time->hour = time->hour - 3;
-    }
-}
-
 void zoomInFunction(){
     fontSize++;
     setFontSize(fontSize);
@@ -154,6 +129,14 @@ void benchmarkFunction(){
     runBenchmarks();
 }
 
+void divZeroFunction(){
+    div0();
+}
+
+void invOpCodeFunction(){
+    opCode();
+}
+
 char getChar(){
     char c;
     while ( read(STDIN, &c, 1) == 0 || c > MAX_ASCII ){
@@ -177,4 +160,31 @@ static void extractCommand(const char * buffer, char * command){
 
 static void newLine(){
     write(STDOUT, "\n");
+}
+
+static void toUtcMinus3(timeStructPtr time){
+    if (time->hour < 3){
+        time->hour += 21;
+        time->day--;
+        if (time->day == 0){
+            time->month--;
+            if (time->month == 0){
+                time->month = 12;
+                time->year--;
+            }
+            if(time->month == 2){
+                time->day = 28;
+                if(time->year % 4 == 0){
+                    time->day = 29;
+                }
+            } else if(time->month == 4 || time->month == 6 || time->month == 9 || time->month == 11){
+                time->day = 30;
+            } else{
+                time->day = 31;
+            }
+        }
+    }
+    else{
+        time->hour = time->hour - 3;
+    }
 }

@@ -12,10 +12,10 @@ static keyboardBuffer kb = {0};
 // Variables de estado del teclado
 static uint8_t caps_lock = 0;
 static uint8_t shift_pressed = 0;
-
-static uint8_t getScancode();
 static const uint8_t scancodesMap[SCANCODE_MAP_SIZE];
 static const uint8_t shift_map[SCANCODE_MAP_SIZE];
+
+static uint8_t getScancode();
 static uint8_t scancodeToChar(uint8_t scancode);
 static uint8_t handleKey(uint8_t scancode);
 
@@ -116,15 +116,14 @@ static const uint8_t scancodesMap[SCANCODE_MAP_SIZE] = {
     [0x38] = KC_NONE,    // Alt
     [0x39] = KC_SPACE,
     [0x3A] = KC_NONE,    // Caps Lock
-    [0x3B] = KC_NONE,    // F1
+    [0x3B] = KC_NONE,   
     [0x3C] = KC_NONE, [0x3D] = KC_NONE, [0x3E] = KC_NONE,
     [0x3F] = KC_NONE, [0x40] = KC_NONE, [0x41] = KC_NONE, [0x42] = KC_NONE,
     [0x43] = KC_NONE, [0x44] = KC_NONE, [0x45] = KC_NONE, [0x46] = KC_NONE,
     [0x47] = '7', [0x48] = '8', [0x49] = '9', [0x4A] = '-', [0x4B] = '4',
     [0x4C] = '5', [0x4D] = '6', [0x4E] = '+', [0x4F] = '1', [0x50] = '2',   
     [0x51] = '3', [0x52] = '0', [0x53] = '.', 
-    [0x57] = KC_NONE,    // F11
-    [0x58] = KC_NONE,    // F12
+    [0x57] = KC_NONE, [0x58] = KC_NONE,   
 };
 
 // Mapeo de caracteres con shift presionado
@@ -141,12 +140,10 @@ static uint8_t scancodeToChar(uint8_t scancode) {
     uint8_t c = scancodesMap[scancode];
     
     if (c >= 'a' && c <= 'z') {
-        // Aplicar mayúsculas si corresponde
         if ((shift_pressed && !caps_lock) || (!shift_pressed && caps_lock)) {
-            c = c - 'a' + 'A';
+            c -= DELTA;
         }
     }
-    // Si es otro carácter y shift está presionado
     else if (shift_pressed && shift_map[(unsigned char)c]) {
         c = shift_map[(unsigned char)c];
     }

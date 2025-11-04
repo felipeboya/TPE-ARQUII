@@ -23,7 +23,7 @@ void playTron(){
     setMode(VIDEO_MODE, 0);
     welcome();
     clearScreen();
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Saliendo!",3, GREEN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Leaving Tron!",3, GREEN);
     sleep(20);
     beep(100,5);
     beep(50,5);
@@ -33,12 +33,12 @@ void playTron(){
 
 void welcome(){
     clearScreen();
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Bienvenido al Tron!",3, GREEN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Welcome to Tron!",3, GREEN);
     sleep(20);
     playArcadeSong();
     clearScreen();
 
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-100,"Elija el modo de juego: (Presione la tecla correspondiente)",2, GREEN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-100,"Choose de game mode: (Press the corresponding key)",2, GREEN);
     printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"s. Single Player",2, GREEN);
     printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"m. Multiplayer",2, GREEN);
     printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"q. Exit",2, GREEN);
@@ -47,11 +47,11 @@ void welcome(){
     
     if (c != 'q'){
         clearScreen();
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-100,"Elija el nivel: (Presione la tecla correspondiente)",2, GREEN);
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"0. Facil",2, GREEN);
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"1. Medio",2, GREEN);
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"2. Dificil",2, GREEN);
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+100,"3. Imposible",2, GREEN);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-100,"Choose level: (Press the corresponding key)",2, GREEN);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"0. Easy",2, GREEN);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"1. Medium",2, GREEN);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"2. Hard",2, GREEN);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+100,"3. Impossible",2, GREEN);
         
         char lev;
         while((( lev = getChar() ) != '0' ) && (lev != '1' ) && (lev != '2' ) && (lev != '3' )){}
@@ -69,7 +69,7 @@ void welcome(){
 
 static void singlePlayer(){
     singlePlayerPoints = 0;
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Utilice W-A-S-D para moverse",2, GREEN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Use W-A-S-D to move",2, GREEN);
     sleep(50);
     clearScreen();
 
@@ -107,7 +107,7 @@ static void singlePlayer(){
 static void retryMenuSingleplayer(){
     clearScreen();
     printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-150,"GAME OVER",3, RED);
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"Tu puntaje fue",3, BLUE);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"Your score was",3, BLUE);
     printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,numToString(singlePlayerPoints,10),2, BLUE);
     sleep(40);
     clearScreen();
@@ -127,13 +127,13 @@ static void retryMenuSingleplayer(){
 static void retryMenuMultiplayer(int whoWon, int scores[]){
     clearScreen();
     if(whoWon == 1)
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Ganador: Jugador 1",3, BLUE);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Winner: Player 1",3, BLUE);
     else if(whoWon == 2)
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Ganador: Jugador 2",3, ORANGE);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Winner: Player 2",3, ORANGE);
     else
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Empate",3, GREEN);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Draw",3, GREEN);
 
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 50,"Puntaje",2, GREEN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 50,"Score",2, GREEN);
     printCenteredString(SCREEN_WIDTH/2-100, SCREEN_HEIGHT/2 + 100,numToString(scores[0],10),2, GREEN);
     printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 100," VS ",2, GREEN);
     printCenteredString(SCREEN_WIDTH/2+100, SCREEN_HEIGHT/2 + 100,numToString(scores[1],10),2, GREEN);
@@ -153,11 +153,11 @@ static void retryMenuMultiplayer(int whoWon, int scores[]){
 }
 
 static void multiPlayer(){
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"Jugador 1: Utilice W-A-S-D para moverse",2, BLUE);
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"Jugador 2: Utilice I-J-K-L para moverse",2, ORANGE);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"Player 1: Use W-A-S-D to move",2, BLUE);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"Jugador 2: Use I-J-K-L to move",2, ORANGE);
     sleep(50);
     clearScreen();
-    static int scores[2] = {0,0}; //No Funciona Si Jugas mas de 2^64 Veces jaja :D
+    static int scores[2] = {0,0}; 
     initializeMap();
     uint64_t p1x = PLAYER_1_INIT_X;
     uint64_t p1y = PLAYER_1_INIT_Y - 1;

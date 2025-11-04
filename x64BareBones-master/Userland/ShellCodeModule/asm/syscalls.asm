@@ -10,8 +10,6 @@ GLOBAL sys_set_mode
 GLOBAL sys_sleep
 GLOBAL sys_beep
 GLOBAL sys_get_time
-GLOBAL sys_get_screen_info
-GLOBAL sys_draw_line
 GLOBAL sys_get_ticks
 GLOBAL sys_get_cpu_info
 
@@ -65,14 +63,8 @@ sys_beep:
 sys_get_time:
     syscall 0xB
 
-sys_get_screen_info:
+sys_get_ticks:
     syscall 0xC
 
-sys_draw_line:
-    syscall 0xD
-
-sys_get_ticks:
-    syscall 0xE
-
 sys_get_cpu_info:
-    syscall 0xF
+    syscall 0xD

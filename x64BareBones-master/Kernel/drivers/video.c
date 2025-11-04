@@ -24,10 +24,10 @@ static vbeInfoPtr vbeModeInfo = (vbeInfoPtr) 0x0000000000005C00;
 extern uint8_t fontBitmap[4096];
 static Color backgroundColor = {0,0,0}; 	// Color default del fondo
 static Color fontColor = {255,255,255};	    // Color default de la fuente
-static Color stderrColor = {255, 0,0};
+static Color stderrColor = {255, 0,0};      
 static Color caretColor = {0, 255, 0};      //Default color del visible cursor
 static uint64_t fontSize = 1;				// Tamaño base de fuente
-static uint8_t driverMode = TEXT_MODE;		
+static uint8_t driverMode = TEXT_MODE;      		
 static Point currentScreenPoint = {0,0};
 static charBufferType charBuffer[CHAR_BUFFER_ROWS * CHAR_BUFFER_COLS]; // Array de caracteres en pantalla
 static uint64_t bufferIndex = 0;
@@ -101,11 +101,6 @@ uint64_t drawFont(uint64_t x, uint64_t y, uint64_t ch, Color color, uint64_t siz
     return OK;
 }
 
-// MODO VIDEO
-uint64_t drawLine(uint64_t x, uint64_t y, uint64_t width, Color color){
-    drawRectangle(x, y, width, 1, color);
-}
-
 // MODO TEXTO
 uint64_t setFontSize(uint64_t size) {
     if(!inTextMode()){
@@ -123,12 +118,11 @@ uint64_t setFontSize(uint64_t size) {
     fontSize = size;
     charBufferRowsZoomed = (SCREEN_HEIGHT / (Y_FONT_OFFSET));  // cantidad de caracteres maximos por linea
     charBufferColsZoomed = (SCREEN_WIDTH / X_FONT_OFFSET);	// cantidad de caracteres maximos por columna
-    clearScreen();		// Limpia todo cuando se modifica el tamaño de fuente
+    clearScreen();	
     return OK;
 }
 
 // MODO TEXTO Y VIDEO
-// Limpia la pantalla y la deja de un solo color
 uint64_t colorClearScreen(Color color){
     if(driverMode == TEXT_MODE){
         backgroundColor = color;
@@ -155,9 +149,8 @@ uint64_t setMode(uint64_t mode, Color c){
     if(mode == TEXT_MODE){
         printBuffer();			// Printea el buffer cuando vuelve a modo texto
     }else{
-    	clearScreen();    // Modo video con pantalla limpia
+    	clearScreen();  
     }
-
     return OK;
 }
 
@@ -195,13 +188,7 @@ uint64_t textWrite(uint64_t fd, const char * buffer, int64_t amount){
     return i;
 }
 
-uint64_t getScreenInfo(screenInfoPtr screenInformation){
-    screenInformation->width = SCREEN_WIDTH;
-    screenInformation->height = SCREEN_HEIGHT;
-    return OK;
-}
-
-//Funciones STATIC:
+// Funciones STATIC
 static uint64_t inTextMode(){
     return ((driverMode == TEXT_MODE) || overrideMode);
 }
@@ -327,22 +314,11 @@ static void printBuffer(){
 }
 
 static void drawCaret(){
-    // como siempre calculamos un margen creo que nunca pasa que no nos entra el caret
-    /*if (currentScreenPoint.x+CARET_WIDTH*fontSize - CARET_WIDTH >= SCREEN_WIDTH) {
-        currentScreenPoint.y += FONT_HEIGHT*fontSize;
-        currentScreenPoint.x = 0;
-    }
-    if(currentScreenPoint.y + FONT_HEIGHT*fontSize - FONT_HEIGHT >= SCREEN_HEIGHT){
-        reBufferPrint();
-    }
-    overrideMode=1;
-    */
     for (uint64_t row = 0; row < FONT_HEIGHT; row++){
         for (uint64_t col = 0; col < CARET_WIDTH; col++){
             drawRectangle(currentScreenPoint.x + col * fontSize, currentScreenPoint.y + row * fontSize, fontSize, fontSize, caretColor);
         }
     }
-
 }
 
 static void eraseCaret(){
@@ -351,5 +327,4 @@ static void eraseCaret(){
             drawRectangle(currentScreenPoint.x + col * fontSize, currentScreenPoint.y + row * fontSize, fontSize, fontSize, backgroundColor);
         }
     }
-
 }

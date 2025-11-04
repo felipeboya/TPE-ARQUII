@@ -49,14 +49,6 @@ uint64_t getTime(timeStructPtr time){
     return sys_get_time(time);
 }
 
-uint64_t getScreenInfo(screenInfoPtr screenInformation){
-    return sys_get_screen_info(screenInformation);
-}
-
-uint64_t drawLine(uint64_t x, uint64_t y, uint64_t width, uint64_t color){
-    return sys_draw_line(x, y, width, color);
-}
-
 uint64_t getTicks(){
     return sys_get_ticks();
 }

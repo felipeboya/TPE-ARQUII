@@ -1,11 +1,11 @@
 #include <benchmark.h>
 
-// Variables volátiles para evitar optimizaciones del compilador
-static volatile uint64_t dummy = 0;
+// Variable global para evitar optimizaciones del compilador
+static uint64_t dummy = 0;
 
 // Benchmark de operaciones aritméticas
 static void benchmarkArithmetic(uint64_t iterations) {
-    volatile uint64_t a = 1, b = 2, c = 0;
+    uint64_t a = 1, b = 2, c = 0;
     for(uint64_t i = 0; i < iterations; i++) {
         c = a + b;
         c = a - b;
@@ -17,34 +17,34 @@ static void benchmarkArithmetic(uint64_t iterations) {
 
 // Benchmark de acceso a memoria
 static void benchmarkMemoryAccess(uint64_t iterations) {
-    volatile uint64_t array[100];
+    uint64_t array[100];
     for(uint64_t i = 0; i < iterations; i++) {
-        for(int j = 0; j < 100; j++) {
+        for(uint64_t j = 0; j < 100; j++) {
             array[j] = i + j;
             dummy = array[j];
         }
     }
 }
 
-// Benchmark de operaciones lógicas
-static void benchmarkLogical(uint64_t iterations) {
-    volatile uint64_t a = 0xAAAAAAAA, b = 0x55555555, c = 0;
+// Benchmark de operaciones de comparación y módulo
+static void benchmarkComparison(uint64_t iterations) {
+    uint64_t a = 12345, b = 67890, c = 0;
     for(uint64_t i = 0; i < iterations; i++) {
-        c = a & b;
-        c = a | b;
-        c = a ^ b;
-        c = ~a;
+        if(a < b) c = a + b;
+        if(a > b) c = a - b;
+        if(a == b) c = a * b;
+        c = a % (b + 1);
         dummy = c;
     }
 }
 
 // Benchmark de llamadas a funciones
-static volatile uint64_t helper(uint64_t x) {
+static uint64_t helper(uint64_t x) {
     return x * 2 + 1;
 }
 
 static void benchmarkFunctionCalls(uint64_t iterations) {
-    volatile uint64_t result = 0;
+    uint64_t result = 0;
     for(uint64_t i = 0; i < iterations; i++) {
         result = helper(i);
         dummy = result;
@@ -53,8 +53,6 @@ static void benchmarkFunctionCalls(uint64_t iterations) {
 
 // Benchmark de operaciones de punto flotante (si están habilitadas)
 static void benchmarkFloatingPoint(uint64_t iterations) {
-    // Nota: requiere que el CPU tenga FPU habilitado
-    // En caso de excepción, retornará gracefully
     printf("  [Floating point test skipped - not implemented]\n");
 }
 
@@ -63,7 +61,6 @@ void printBenchmarkResults(const char* test, uint64_t ticks, uint64_t iterations
     getCpuInfo(&info);
     
     // Calcular tiempo transcurrido
-    // 18 ticks ≈ 1 segundo
     uint64_t seconds = ticks / 18;
     uint64_t ms = (ticks % 18) * 1000 / 18;
     
@@ -74,9 +71,9 @@ void printBenchmarkResults(const char* test, uint64_t ticks, uint64_t iterations
     }
     
     printf("  %s:\n", test);
-    printf("    Tiempo: %d.%ds\n", seconds, ms/100);
+    printf("    Time: %d.%ds\n", seconds, ms/100);
     printf("    Ticks: %d\n", ticks);
-    printf("    Ops/seg: ~%d\n", opsPerTick);
+    printf("    Ops/sec: ~%d\n", opsPerTick);
     printf("\n");
 }
 
@@ -86,49 +83,49 @@ void runBenchmarks() {
     uint64_t iterations = BENCHMARK_ITERATIONS;
     
     printf("\n========================================\n");
-    printf("  BENCHMARK SUITE\n");
-    printf("========================================\n\n");
+    printf("            BENCHMARK SUITE\n");
+    printf("========================================\\n\n");
     
     // Obtener información del sistema
     if(getCpuInfo(&info) == OK) {
-        printf("Informacion del sistema:\n");
+        printf("System information:\n");
         printf("  CPU Speed: %d MHz\n", info.cpuSpeed);
-        printf("  Cores activos: %d\n", info.coresActive);
-        printf("  Cores detectados: %d\n", info.coresDetected);
+        printf("  Active cores: %d\n", info.coresActive);
+        printf("  Detected cores: %d\n", info.coresDetected);
         printf("\n");
     }
     
-    printf("Ejecutando benchmarks...\n");
-    printf("(Cada test ejecuta %d iteraciones)\n\n", iterations);
+    printf("Running benchmarks...\n");
+    printf("(Each test runs %d iterations)\n\n", iterations);
     
-    // Test 1: Operaciones aritméticas
+    // Operaciones aritméticas
     startTicks = getTicks();
     benchmarkArithmetic(iterations);
     endTicks = getTicks();
-    printBenchmarkResults("Operaciones Aritmeticas", endTicks - startTicks, iterations * 4);
+    printBenchmarkResults("Arithmetic Operations", endTicks - startTicks, iterations * 4);
     
-    // Test 2: Acceso a memoria
+    // Acceso a memoria
     startTicks = getTicks();
     benchmarkMemoryAccess(iterations / 100);  // Menos iteraciones porque hace 100 accesos por vuelta
     endTicks = getTicks();
-    printBenchmarkResults("Acceso a Memoria", endTicks - startTicks, iterations);
+    printBenchmarkResults("Memory Access", endTicks - startTicks, iterations);
     
-    // Test 3: Operaciones lógicas
+    // Operaciones de comparación
     startTicks = getTicks();
-    benchmarkLogical(iterations);
+    benchmarkComparison(iterations);
     endTicks = getTicks();
-    printBenchmarkResults("Operaciones Logicas", endTicks - startTicks, iterations * 4);
+    printBenchmarkResults("Comparison Operations", endTicks - startTicks, iterations * 4);
     
-    // Test 4: Llamadas a funciones
+    // Llamadas a funciones
     startTicks = getTicks();
     benchmarkFunctionCalls(iterations);
     endTicks = getTicks();
-    printBenchmarkResults("Llamadas a Funciones", endTicks - startTicks, iterations);
+    printBenchmarkResults("Function Calls", endTicks - startTicks, iterations);
     
-    // Test 5: Operaciones de punto flotante
+    // Operaciones de punto flotante
     benchmarkFloatingPoint(iterations);
     
-    printf("========================================\n");
-    printf("  Benchmarks completados!\n");
-    printf("========================================\n\n");
+    printf("=========================================\n");
+    printf("         Benchmarks completed!\n");
+    printf("=========================================\n\n");
 }
