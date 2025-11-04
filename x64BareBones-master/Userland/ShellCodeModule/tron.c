@@ -11,15 +11,20 @@ static void retryMenuMultiplayer(int whoWon, int scores[]);
 static void get_player_1_direction(uint16_t c, int64_t * direction);
 static void get_player_2_direction(uint16_t c, int64_t * direction);
 static void playArcadeSong();
-static void printCenteredString(uint64_t x, uint64_t y, const char * str, uint64_t font_size);
-static void printString(uint64_t x, uint64_t y, const char * str, uint64_t font_size);
+static void printCenteredString(uint64_t x, uint64_t y, const char * str, uint64_t font_size, uint64_t color);
+static void printString(uint64_t x, uint64_t y, const char * str, uint64_t font_size, uint64_t color);
 static void fillPosition(uint64_t x, uint64_t y, uint64_t color);
+
+static uint64_t level = 0;
+static const uint64_t levels[] = {LEVEL_0, LEVEL_1, LEVEL_2, LEVEL_3};
+static singlePlayerPoints = 0;
 
 void playTron(){
     setMode(VIDEO_MODE, 0);
     welcome();
     clearScreen();
-    printCenteredString(512, 384,"Saliendoo",3);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Saliendo!",3, GREEN);
+    sleep(20);
     // playSound(100,5);
     // playSound(50,5);
     setMode(TEXT_MODE, 0);
@@ -28,18 +33,32 @@ void playTron(){
 
 void welcome(){
     clearScreen();
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Bienvenido al Tron!",3);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Bienvenido al Tron!",3, GREEN);
     sleep(20);
     // playArcadeSong();
     clearScreen();
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-100,"Elija su Game Mode: (Presione la tecla correspondiente)",2);
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"s. Single Player",2);
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"m. Multiplayer",2);
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"q. Exit",2);
 
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-100,"Elija el modo de juego: (Presione la tecla correspondiente)",2, GREEN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"s. Single Player",2, GREEN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"m. Multiplayer",2, GREEN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"q. Exit",2, GREEN);
     char c;
     while((( c = getChar() ) != 'q' ) && (c != 'm' ) && (c != 's' )){}
-    clearScreen();
+    
+    if (c != 'q'){
+        clearScreen();
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-100,"Elija el nivel: (Presione la tecla correspondiente)",2, GREEN);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"0. Facil",2, GREEN);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"1. Medio",2, GREEN);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"2. Dificil",2, GREEN);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+100,"3. Imposible",2, GREEN);
+        
+        char lev;
+        while((( lev = getChar() ) != '0' ) && (lev != '1' ) && (lev != '2' ) && (lev != '3' )){}
+        level = lev - '0';
+        clearScreen();
+    }
+    
     switch (c){
         case 'q': break;
         case 's': singlePlayer(); break;
@@ -49,7 +68,8 @@ void welcome(){
 }
 
 static void singlePlayer(){
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Utilice W-A-S-D para moverse",2);
+    singlePlayerPoints = 0;
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Utilice W-A-S-D para moverse",2, GREEN);
     sleep(50);
     clearScreen();
 
@@ -64,6 +84,7 @@ static void singlePlayer(){
     fillPosition(p1x, p1y, BLUE);
 
     while(1){
+        singlePlayerPoints++;
         sleep(1);
         buffer_size = 0;
         buffer_size = read(STDIN, buffer, 1);
@@ -80,17 +101,18 @@ static void singlePlayer(){
         fillPosition(p1x, p1y, BLUE);
 
     }
-
     retryMenuSingleplayer();
 }
 
 static void retryMenuSingleplayer(){
     clearScreen();
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-300,"Perdiste! Mejor suerte la proxima",2);
-    sleep(18);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-150,"GAME OVER",3, RED);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"Tu puntaje fue",3, BLUE);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,numToString(singlePlayerPoints,10),2, BLUE);
+    sleep(40);
     clearScreen();
-    printCenteredString(SCREEN_WIDTH/2-100, SCREEN_HEIGHT/2,"r. Retry",2);
-    printCenteredString(SCREEN_WIDTH/2+100, SCREEN_HEIGHT/2,"m. Main Menu",2);
+    printCenteredString(SCREEN_WIDTH/2-100, SCREEN_HEIGHT/2,"r. Retry",2, GREEN);
+    printCenteredString(SCREEN_WIDTH/2+100, SCREEN_HEIGHT/2,"m. Main Menu",2, GREEN);
 
     char c;
     while((( c = getChar() ) != 'r' ) && (c != 'm' )){}
@@ -99,28 +121,27 @@ static void retryMenuSingleplayer(){
         case 'r': singlePlayer(); break;
         case 'm': welcome(); break;
     }
-;
     sleep(50);
 }
 
 static void retryMenuMultiplayer(int whoWon, int scores[]){
     clearScreen();
     if(whoWon == 1)
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Ganador: Jugador 1",3);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Ganador: Jugador 1",3, BLUE);
     else if(whoWon == 2)
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Ganador: Jugador 2",3);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Ganador: Jugador 2",3, ORANGE);
     else
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Empate",3);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Empate",3, GREEN);
 
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 50,"Puntaje",2);
-    printCenteredString(SCREEN_WIDTH/2-100, SCREEN_HEIGHT/2 + 100,numToString(scores[0],10),2);
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 100," VS ",2);
-    printCenteredString(SCREEN_WIDTH/2+100, SCREEN_HEIGHT/2 + 100,numToString(scores[1],10),2);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 50,"Puntaje",2, GREEN);
+    printCenteredString(SCREEN_WIDTH/2-100, SCREEN_HEIGHT/2 + 100,numToString(scores[0],10),2, GREEN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 100," VS ",2, GREEN);
+    printCenteredString(SCREEN_WIDTH/2+100, SCREEN_HEIGHT/2 + 100,numToString(scores[1],10),2, GREEN);
 
     sleep(50);
     clearScreen();
-    printCenteredString(SCREEN_WIDTH/2-100, SCREEN_HEIGHT/2,"r. Retry",2);
-    printCenteredString(SCREEN_WIDTH/2+100, SCREEN_HEIGHT/2,"m. Main Menu",2);
+    printCenteredString(SCREEN_WIDTH/2-100, SCREEN_HEIGHT/2,"r. Retry",2, GREEN);
+    printCenteredString(SCREEN_WIDTH/2+100, SCREEN_HEIGHT/2,"m. Main Menu",2, GREEN);
     
     char c;
     while((( c = getChar() ) != 'r' ) && (c != 'm' )){}
@@ -132,8 +153,8 @@ static void retryMenuMultiplayer(int whoWon, int scores[]){
 }
 
 static void multiPlayer(){
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"Jugador 1: Utilice W-A-S-D para moverse",2);
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"Jugador 2: Utilice I-J-K-L para moverse",2);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"Jugador 1: Utilice W-A-S-D para moverse",2, BLUE);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"Jugador 2: Utilice I-J-K-L para moverse",2, ORANGE);
     sleep(50);
     clearScreen();
     static int scores[2] = {0,0}; //No Funciona Si Jugas mas de 2^64 Veces jaja :D
@@ -265,16 +286,16 @@ static void get_player_2_direction(uint16_t c, int64_t * direction){
     }
 }
 
-static void printCenteredString(uint64_t x, uint64_t y, const char * str, uint64_t font_size) {    
+static void printCenteredString(uint64_t x, uint64_t y, const char * str, uint64_t font_size, uint64_t color) {    
     uint64_t len = strlen(str);
     uint64_t start_x = x - (len / 2) * CHARACTER_WIDTH * font_size;
     uint64_t start_y = y;
-    printString(start_x, start_y, str, font_size);
+    printString(start_x, start_y, str, font_size, color);
 }
 
-static void printString(uint64_t x, uint64_t y, const char * str, uint64_t font_size) {
+static void printString(uint64_t x, uint64_t y, const char * str, uint64_t font_size, uint64_t color) {
     for (uint64_t i = 0; str[i] != '\0'; i++) {
-        drawFont(x + i * CHARACTER_WIDTH * font_size, y, str[i], GREEN, font_size);
+        drawFont(x + i * CHARACTER_WIDTH * font_size, y, str[i], color, font_size);
     }
 }
 
@@ -303,9 +324,12 @@ static void playArcadeSong() {
 static void initializeMap(){
     for(int i = 0; i < MAP_HEIGHT; i++){
         for(int j = 0; j < MAP_WIDTH; j++){
-            map[i][j] = 0;
             if(i == 0 || i == MAP_HEIGHT-1 || j == 0 || j == MAP_WIDTH-1){
                 fillPosition(j, i, GRAY);
+            }else if ( i % levels[level] == 0 && j % levels[level] == 0){
+                fillPosition(j, i, GRAY);
+            }else{
+                map[i][j] = 0;
             }
         }
     }

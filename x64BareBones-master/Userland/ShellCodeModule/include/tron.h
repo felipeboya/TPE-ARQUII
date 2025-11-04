@@ -24,8 +24,12 @@
 #define PLAYER_1_INIT_X 64
 #define PLAYER_1_INIT_Y 94
 
-void playTron();
+#define LEVEL_0 150
+#define LEVEL_1 17
+#define LEVEL_2 10
+#define LEVEL_3 5
 
+void playTron();
 
 enum direction {UP, DOWN, LEFT, RIGHT};
 
@@ -35,7 +39,6 @@ typedef struct position{
     int x;
     int y;
 } position;
-
 
 typedef struct player{
     direction dir;
