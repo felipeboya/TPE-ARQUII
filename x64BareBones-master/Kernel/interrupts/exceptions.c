@@ -46,7 +46,7 @@ static void zeroDivision() {
 }
 
 static void printRegs(){
-	char * regs[] = {"RAX", "RBX", "RCX", "RDX", "RBP", "RDI", "RSI", "R8", "R9", "R10", "R11", "R12", "R13", "R14", "R15", "RIP", "CS", "RFLAGS", "RSP", "SS"};
+	char * regs[] = {"RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "R8", "R9", "R10", "R11", "R12", "R13", "R14", "R15", "RIP", "CS", "RFLAGS", "RSP", "SS"};
 
 	const char newline = '\n';
 

@@ -23,6 +23,7 @@ EXTERN exceptionDispatcher
 
 EXTERN registersArrayAux
 EXTERN registersArrayException
+EXTERN getStackBase
 
 SECTION .text
 
@@ -101,9 +102,9 @@ SECTION .text
     mov [registersArrayException + 8*1], rbx      ; rbx
     mov [registersArrayException + 8*2], rcx      ; rcx
     mov [registersArrayException + 8*3], rdx      ; rdx
-    mov [registersArrayException + 8*4], rbp      ; rsi
+    mov [registersArrayException + 8*4], rsi      ; rsi
     mov [registersArrayException + 8*5], rdi      ; rdi
-    mov [registersArrayException + 8*6], rsi      ; rbp
+    mov [registersArrayException + 8*6], rbp      ; rbp
     mov [registersArrayException + 8*7], r8       ; r8
     mov [registersArrayException + 8*8], r9       ; r9
     mov [registersArrayException + 8*9], r10      ; r10
@@ -185,9 +186,9 @@ _irq01Handler:
     mov [registersArrayAux + 8*1], rbx      ; rbx
     mov [registersArrayAux + 8*2], rcx      ; rcx
     mov [registersArrayAux + 8*3], rdx      ; rdx
-    mov [registersArrayAux + 8*4], rbp      ; rsi
+    mov [registersArrayAux + 8*4], rsi      ; rsi
     mov [registersArrayAux + 8*5], rdi      ; rdi
-    mov [registersArrayAux + 8*6], rsi      ; rbp
+    mov [registersArrayAux + 8*6], rbp      ; rbp
     mov [registersArrayAux + 8*7], r8       ; r8
     mov [registersArrayAux + 8*8], r9       ; r9
     mov [registersArrayAux + 8*9], r10      ; r10
@@ -267,3 +268,6 @@ haltcpu:
 SECTION .bss
 	aux resq 1
 	; registersArrayAux resq 20
+
+SECTION .rodata
+	userland equ 0x400000
