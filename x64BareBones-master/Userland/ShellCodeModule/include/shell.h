@@ -32,5 +32,6 @@ void zoomInFunction();
 void zoomOutFunction();
 void tronFunction();
 void beepFunction();
+void benchmarkFunction();
 
 #endif

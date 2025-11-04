@@ -24,6 +24,8 @@
 #define SYS_GET_TIME 0xB
 #define SYS_GET_SCREEN_INFO 0xC
 #define SYS_DRAW_LINE 0xD
+#define SYS_GET_TICKS 0xE
+#define SYS_GET_CPU_INFO 0xF
 
 typedef struct {
     uint8_t year;
@@ -36,6 +38,14 @@ typedef struct {
 
 typedef timeStruct * timeStructPtr;
 
+typedef struct {
+    uint64_t totalTicks;
+    uint16_t cpuSpeed;      // MHz
+    uint16_t coresActive;
+    uint16_t coresDetected;
+} cpuInfo;
+
+typedef cpuInfo * cpuInfoPtr;
 
 uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6);
 

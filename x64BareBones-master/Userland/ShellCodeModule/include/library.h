@@ -32,6 +32,18 @@ struct ScreenInformation{
     uint64_t height;
 };
 
+typedef struct {
+    uint64_t totalTicks;
+    uint16_t cpuSpeed;
+    uint16_t coresActive;
+    uint16_t coresDetected;
+} cpuInfo;
+
+typedef cpuInfo * cpuInfoPtr;
+
+uint64_t getTicks();
+uint64_t getCpuInfo(cpuInfoPtr info);
+
 typedef struct ScreenInformation * screenInfoPtr;
 
 uint64_t read(uint64_t fd, char * buffer, uint64_t count);

@@ -1,6 +1,6 @@
 #include <shell.h>
 
-#define COMMANDS_QUANTITY 8
+#define COMMANDS_QUANTITY 9
 
 static uint64_t fontSize = 1;
 
@@ -12,7 +12,8 @@ Command commands[COMMANDS_QUANTITY] = {
     {"zoomIn", "Zoom in the screen", zoomInFunction},
     {"zoomOut", "Zoom out the screen", zoomOutFunction},
     {"tron", "Play tron", tronFunction},
-    {"beep", "Make a sound", beepFunction}
+    {"beep", "Make a sound", beepFunction},
+    {"benchmark", "Run system benchmarks", benchmarkFunction}
 };
 
 void execute(const char * entry);
@@ -42,6 +43,8 @@ void readLine(char * buffer){
         char letter[2] = {c, 0};    // null terminated
         if( c == KC_BACKSP && bufIdx > 0 ){
             bufIdx--;
+        }else if ( c == KC_BACKSP ){
+            continue;
         }
 
         if ( c != KC_BACKSP ){
@@ -144,7 +147,11 @@ void tronFunction(){
 }
 
 void beepFunction(){
-    beep(440, 20);
+    beep(440, 5);
+}
+
+void benchmarkFunction(){
+    runBenchmarks();
 }
 
 char getChar(){
