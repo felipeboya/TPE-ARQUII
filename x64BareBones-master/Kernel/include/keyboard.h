@@ -26,7 +26,7 @@
 #define CAPS_LOCK         0x3A
 #define LEFT_SHIFT        0x2A
 #define RIGHT_SHIFT       0x36
-#define F1                0x3B
+#define SNAPSHOT_KEY      0x29
 
 void keyboardHandler();
 

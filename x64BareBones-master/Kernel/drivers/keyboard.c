@@ -163,22 +163,22 @@ uint8_t handleKey(uint8_t scancode){
         if (scancode == LEFT_SHIFT || scancode == RIGHT_SHIFT) {
             shift_pressed = 0;
         }
-        return 0;
+        return KC_NONE;
     }
     
-    if (scancode == F1){
+    if (scancode == SNAPSHOT_KEY){
         snapshot();
-        return;
+        return KC_NONE;
     }
 
     switch (scancode) {
         case CAPS_LOCK:
             caps_lock = !caps_lock;
-            return 0;
+            return KC_NONE;
         case LEFT_SHIFT:
         case RIGHT_SHIFT:
             shift_pressed = 1;
-            return 0;
+            return KC_NONE;
         default:
             break; 
     }
@@ -186,7 +186,7 @@ uint8_t handleKey(uint8_t scancode){
     uint8_t c = scancodeToChar(scancode);
 
     if(c == KC_ESC || c == KC_NONE){
-        return 0;
+        return KC_NONE;
     }
 
     return c;

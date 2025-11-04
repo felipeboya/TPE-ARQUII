@@ -7,7 +7,7 @@ static uint64_t fontSize = 1;
 Command commands[COMMANDS_QUANTITY] = {
     {"help", "Display this help message", helpFunction},
     {"clear", "Clear the screen", clearFunction},
-    {"registers", "Show CPU registers. Remember to press F1 beforehand", registersFunction},
+    {"registers", "Show CPU registers. Remember to press ` beforehand", registersFunction},
     {"time", "Show current date and time", timeFunction},
     {"zoomIn", "Zoom in the screen", zoomInFunction},
     {"zoomOut", "Zoom out the screen", zoomOutFunction},
@@ -85,9 +85,7 @@ void clearFunction(){
 }
 
 void registersFunction(){
-    CpuSnapshotPtr registers;
-    getSnapshot(registers);
-    //printSnapshot(registers);
+    printSnapshot();
 }
 
 void timeFunction(){

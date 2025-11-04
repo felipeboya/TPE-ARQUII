@@ -230,7 +230,7 @@ static void reBufferPrint(){
 // MODO TEXTO
 static void printFont(charBufferType letter){
     
-    if (currentScreenPoint.x + X_FONT_OFFSET >= SCREEN_WIDTH) {
+    if (currentScreenPoint.x + X_FONT_OFFSET - FONT_WIDTH >= SCREEN_WIDTH) {
         currentScreenPoint.y += Y_FONT_OFFSET;
         currentScreenPoint.x = 0;
     }

@@ -4,16 +4,13 @@ GLOBAL picMasterMask
 GLOBAL picSlaveMask
 GLOBAL haltcpu
 GLOBAL _hlt
-
 GLOBAL _irq00Handler
 GLOBAL _irq01Handler
 GLOBAL _irq02Handler
 GLOBAL _irq03Handler
 GLOBAL _irq04Handler
 GLOBAL _irq05Handler
-
 GLOBAL _int80Handler
-
 GLOBAL _exception0Handler
 GLOBAL _exception6Handler
 
@@ -21,9 +18,9 @@ EXTERN irqDispatcher
 EXTERN syscallDispatcher
 EXTERN exceptionDispatcher
 EXTERN getStackBase
-
 EXTERN registersArrayAux
 EXTERN registersArrayExceptions
+
 
 SECTION .text
 

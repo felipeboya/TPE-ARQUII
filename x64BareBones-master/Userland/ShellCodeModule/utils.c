@@ -105,3 +105,32 @@ int64_t printf(const char * fmt, ...) {
     va_end(args);
     return out;
 }
+
+void printSnapshot() {
+    CpuSnapshot snap;
+    if(!getSnapshot(&snap)) {
+        fprintf(STDERR, "No register snapshot available. Press ` to take a snapshot.\n");
+        return;
+    }
+
+    puts("Register snapshot:\n");
+    printf(" RAX: %x\n", snap.rax);
+    printf(" RBX: %x\n", snap.rbx);
+    printf(" RCX: %x\n", snap.rcx);
+    printf(" RDX: %x\n", snap.rdx);
+    printf(" RBP: %x\n", snap.rbp);
+    printf(" RDI: %x\n", snap.rdi);
+    printf(" RSI: %x\n", snap.rsi);
+    printf(" R8:  %x\n", snap.r8 );
+    printf(" R9:  %x\n", snap.r9 );
+    printf(" R10: %x\n", snap.r10);
+    printf(" R11: %x\n", snap.r11);
+    printf(" R12: %x\n", snap.r12);
+    printf(" R13: %x\n", snap.r13);
+    printf(" R14: %x\n", snap.r14);
+    printf(" R15: %x\n", snap.r15);
+    printf(" RIP: %x\n", snap.rip);
+    printf(" CS:  %x\n", snap.cs);
+    printf(" RSP: %x\n", snap.rsp);
+    printf(" SS:  %x\n", snap.ss);
+}

@@ -66,5 +66,5 @@ sys_get_time:
 sys_get_screen_info:
     syscall 0xC
 
-sys_draw_line
+sys_draw_line:
     syscall 0xD
