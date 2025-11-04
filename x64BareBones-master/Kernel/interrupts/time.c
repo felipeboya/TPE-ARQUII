@@ -1,4 +1,4 @@
-#include <time.h>
+#include "../include/time.h"
 
 #define TICKS_PER_SEC 18
 

@@ -1,7 +1,5 @@
 #include <rtc.h>
 
-extern uint8_t rtc(uint8_t mode);
-
 static uint8_t bcdDecimal(uint8_t BCD) {
     return (BCD >> 4) * 10 + (BCD & 0x0F);
 }

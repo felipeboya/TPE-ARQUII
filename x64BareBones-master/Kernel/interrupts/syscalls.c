@@ -6,9 +6,9 @@
     
 uint64_t registersArray[REGISTERS_QTY];
 uint64_t registersArrayAux[REGISTERS_QTY];
-uint64_t registersArrayException[REGISTERS_QTY];
+static uint8_t snapshotAvailable = 0;
 
-static uint64_t _read(uint64_t fd, char * buffer, uint64_t amount);
+uint64_t _read(uint64_t fd, char * buffer, uint64_t amount);
 static uint64_t _textWrite(uint64_t fd, const char * buffer, uint64_t amount);
 static uint64_t _registersSnapshot(CpuSnapshotPtr snapshot);
 static uint64_t _setFontSize(uint64_t size);
@@ -18,10 +18,11 @@ static uint64_t _drawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t 
 static uint64_t _drawFont(uint64_t x, uint64_t y, uint64_t ch, uint64_t color, uint64_t size);
 static uint64_t _setMode(uint64_t mode, uint64_t color);
 static uint64_t _sleep(uint64_t sleepTicks);
-static uint64_t _playSound(uint64_t frequency, uint64_t time);
+static uint64_t _beep(uint64_t frequency, uint64_t time);
 static uint64_t _getTime(timeStructPtr time);
-static uint64_t _getScreenInfo(screenInfoPtr screenInformation);
-static uint64_t _drawLine(uint64_t x, uint64_t y, uint64_t width, uint64_t color);
+
+static uint64_t _getTicks();
+static uint64_t _getCpuInfo(cpuInfoPtr info);
 
 uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6){
     switch(syscall_id){
@@ -45,21 +46,23 @@ uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, ui
             return _setMode(arg1, arg2);
         case SYS_SLEEP :
             return _sleep(arg1);
-        case SYS_PLAY_SOUND :
-            return _playSound(arg1, arg2);
+        case SYS_BEEP :
+            return _beep(arg1, arg2);
         case SYS_GET_TIME :
             return _getTime((timeStructPtr) arg1);
-        case SYS_GET_SCREEN_INFO :
-            return _getScreenInfo((screenInfoPtr) arg1);
-        case SYS_DRAW_LINE : 
-            return _drawLine(arg1, arg2, arg3, arg4);
+    
+     
+        case SYS_GET_TICKS:
+            return _getTicks();
+        case SYS_GET_CPU_INFO:
+            return _getCpuInfo((cpuInfoPtr) arg1);
         default :
             return ERROR;
     }
 }
 
 // Lee el buffer cargado por el driver de teclado (keysBuffer)
-static uint64_t _read(uint64_t fd, char * buffer, uint64_t amount){
+uint64_t _read(uint64_t fd, char * buffer, uint64_t amount){
     if ( fd != STDIN ){
         return ERROR;
     }
@@ -77,8 +80,15 @@ static uint64_t _textWrite(uint64_t fd, const char * buffer, uint64_t amount){
     return textWrite(fd, buffer, amount);
 }
 
+void snapshot(void){
+    for ( int i = 0; i < REGISTERS_QTY; i++ ){
+        registersArray[i] = registersArrayAux[i];
+    }
+    snapshotAvailable = 1;
+}
+
 static uint64_t _registersSnapshot(CpuSnapshotPtr snapshot){
-    if ( snapshot == NULL ){
+    if ( snapshot == NULL || !snapshotAvailable){
         return ERROR;
     }
     
@@ -102,7 +112,7 @@ static uint64_t _registersSnapshot(CpuSnapshotPtr snapshot){
     snapshot->rflags = registersArray[17];
     snapshot->rsp    = registersArray[18];
     snapshot->ss     = registersArray[19];
-
+    
     return OK;
 }
 
@@ -136,7 +146,7 @@ static uint64_t _sleep(uint64_t sleepTicks){
     return OK;
 }
 
-static uint64_t _playSound(uint64_t frequency, uint64_t time){
+static uint64_t _beep(uint64_t frequency, uint64_t time){
     beep(frequency, time);
     return OK;
 }
@@ -151,16 +161,22 @@ static uint64_t _getTime(timeStructPtr time){
     return OK;
 }
 
-static uint64_t _getScreenInfo(screenInfoPtr screenInformation){
-    return getScreenInfo(screenInformation);
+static uint64_t _getTicks(){
+    return ticksElapsed();
 }
 
-static uint64_t _drawLine(uint64_t x, uint64_t y, uint64_t width, uint64_t color){
-    return drawLine(x, y, width, castToColor(color));
-}
-
-void snapshot(void){
-    for ( int i = 0; i < REGISTERS_QTY; i++ ){
-        registersArray[i] = registersArrayAux[i];
+static uint64_t _getCpuInfo(cpuInfoPtr info){
+    if(info == NULL){
+        return ERROR;
     }
+    
+    info->totalTicks = ticksElapsed();
+    
+    // Lee desde la InfoMap (ubicación 0x5000)
+    uint16_t * infoMap = (uint16_t *) 0x5010;
+    info->cpuSpeed = infoMap[0];      // Offset 0x5010
+    info->coresActive = infoMap[1];   // Offset 0x5012
+    info->coresDetected = infoMap[2]; // Offset 0x5014
+    
+    return OK;
 }

@@ -19,28 +19,18 @@
 #define GREEN 0x00FF00
 #define BLUE 0x0000FF
 #define ORANGE 0xFFA500
+#define CYAN 0x00FFFF
+#define YELLOW 0xFDF9F6
 #define WHITE 0xFFFFFF
 
 #define PLAYER_1_INIT_X 64
 #define PLAYER_1_INIT_Y 94
 
+#define LEVEL_0 150
+#define LEVEL_1 17
+#define LEVEL_2 10
+#define LEVEL_3 5
+
 void playTron();
-
-
-enum direction {UP, DOWN, LEFT, RIGHT};
-
-typedef enum direction direction;
-
-typedef struct position{
-    int x;
-    int y;
-} position;
-
-
-typedef struct player{
-    direction dir;
-    position pos;
-    uint64_t color;
-} player;
 
 #endif

@@ -27,12 +27,17 @@ typedef struct {
 
 typedef timeStruct * timeStructPtr;
 
-struct ScreenInformation{
-    uint64_t width;
-    uint64_t height;
-};
+typedef struct {
+    uint64_t totalTicks;
+    uint16_t cpuSpeed;
+    uint16_t coresActive;
+    uint16_t coresDetected;
+} cpuInfo;
 
-typedef struct ScreenInformation * screenInfoPtr;
+typedef cpuInfo * cpuInfoPtr;
+
+uint64_t getTicks();
+uint64_t getCpuInfo(cpuInfoPtr info);
 
 uint64_t read(uint64_t fd, char * buffer, uint64_t count);
 uint64_t write(uint64_t fd, const char * s);
@@ -44,10 +49,8 @@ uint64_t drawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, 
 uint64_t drawFont(uint64_t x, uint64_t y, uint64_t ch, uint64_t color, uint64_t size);
 uint64_t setMode(uint64_t mode, uint64_t color);
 uint64_t sleep(uint64_t sleepTicks);
-uint64_t playSound(uint64_t frequency, uint64_t time);
+uint64_t beep(uint64_t frequency, uint64_t time);
 uint64_t getTime(timeStructPtr time);
-uint64_t getScreenInfo(screenInfoPtr screenInformation);
-uint64_t drawLine(uint64_t x, uint64_t y, uint64_t width, uint64_t color);
 
 char getChar();
 

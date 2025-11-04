@@ -21,12 +21,14 @@
 #define KC_ESC    0x1B
 #define KC_SPACE  ' '
 
+#define DELTA ('a' - 'A')
+
 // Estados especiales
 #define UNPRESSED_BIT     0x80  // Bit que indica break code (tecla soltada)
 #define CAPS_LOCK         0x3A
 #define LEFT_SHIFT        0x2A
 #define RIGHT_SHIFT       0x36
-#define F1                0x3B
+#define SNAPSHOT_KEY      0x29
 
 void keyboardHandler();
 uint8_t getChar();

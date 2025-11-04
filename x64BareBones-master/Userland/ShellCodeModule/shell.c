@@ -1,18 +1,21 @@
 #include <shell.h>
 
-#define COMMANDS_QUANTITY 8
+#define COMMANDS_QUANTITY 11
 
 static uint64_t fontSize = 1;
 
 Command commands[COMMANDS_QUANTITY] = {
     {"help", "Display this help message", helpFunction},
     {"clear", "Clear the screen", clearFunction},
-    {"registers", "Show CPU registers. Remember to press F1 beforehand", registersFunction},
+    {"registers", "Show CPU registers. Remember to press ` beforehand", registersFunction},
     {"time", "Show current date and time", timeFunction},
     {"zoomIn", "Zoom in the screen", zoomInFunction},
     {"zoomOut", "Zoom out the screen", zoomOutFunction},
     {"tron", "Play tron", tronFunction},
-    {"beep", "Make a sound", beepFunction}
+    {"beep", "Make a sound", beepFunction},
+    {"benchmark", "Run system benchmarks", benchmarkFunction},
+    {"divZero", "Throw an exception (divide by zero)", divZeroFunction},
+    {"invOpCode", "Throw an exception (invalide op code)", invOpCodeFunction}
 };
 
 void execute(const char * entry);
@@ -42,6 +45,8 @@ void readLine(char * buffer){
         char letter[2] = {c, 0};    // null terminated
         if( c == KC_BACKSP && bufIdx > 0 ){
             bufIdx--;
+        }else if ( c == KC_BACKSP ){
+            continue;
         }
 
         if ( c != KC_BACKSP ){
@@ -85,9 +90,7 @@ void clearFunction(){
 }
 
 void registersFunction(){
-    CpuSnapshotPtr registers;
-    getSnapshot(registers);
-    //printSnapshot(registers);
+    printSnapshot();
 }
 
 void timeFunction(){
@@ -98,6 +101,65 @@ void timeFunction(){
     printf("%d/%d/%d\n", time.day, time.month, time.year);
     int64_t h = time.hour;
     printf("%d:%d:%d\n", h, time.minutes, time.seconds);
+}
+
+void zoomInFunction(){
+    fontSize++;
+    setFontSize(fontSize);
+}
+
+void zoomOutFunction(){
+    if (fontSize <= 1){
+        write(STDERR, "Unable to execute command: Minimum size displayed");
+        return;
+    }
+    fontSize--;
+    setFontSize(fontSize);
+}
+
+void tronFunction(){
+    playTron();
+}
+
+void beepFunction(){
+    beep(440, 5);
+}
+
+void benchmarkFunction(){
+    runBenchmarks();
+}
+
+void divZeroFunction(){
+    div0();
+}
+
+void invOpCodeFunction(){
+    opCode();
+}
+
+char getChar(){
+    char c;
+    while ( read(STDIN, &c, 1) == 0 || c > MAX_ASCII ){
+        _hlt();
+    }
+    return (char) c;
+}
+
+// Static Functions
+static void extractCommand(const char * buffer, char * command){
+    uint64_t cmdIdx = 0;
+    for ( int i = 0; i < BUFF_SIZE; i++ ){
+        if (buffer[i] == ' ' || buffer[i] == 0){
+            break;
+        }
+        command[cmdIdx++] = buffer[i];
+    }
+
+    command[cmdIdx] = 0; 
+}
+
+static void newLine(){
+    write(STDOUT, "\n");
 }
 
 static void toUtcMinus3(timeStructPtr time){
@@ -125,52 +187,4 @@ static void toUtcMinus3(timeStructPtr time){
     else{
         time->hour = time->hour - 3;
     }
-}
-
-void zoomInFunction(){
-    fontSize++;
-    setFontSize(fontSize);
-}
-
-void zoomOutFunction(){
-    if (fontSize <= 1){
-        write(STDERR, "Unable to execute command: Minimum size displayed");
-        return;
-    }
-    fontSize--;
-    setFontSize(fontSize);
-}
-
-void tronFunction(){
-    playTron();
-}
-
-//  NO ANDA
-void beepFunction(){
-    playSound(440, 20);
-}
-
-char getChar(){
-    char c;
-    while ( read(STDIN, &c, 1) == 0 || c > MAX_ASCII ){
-        _hlt();
-    }
-    return (char) c;
-}
-
-// Static Functions
-static void extractCommand(const char * buffer, char * command){
-    uint64_t cmdIdx = 0;
-    for ( int i = 0; i < BUFF_SIZE; i++ ){
-        if (buffer[i] == ' ' || buffer[i] == 0){
-            break;
-        }
-        command[cmdIdx++] = buffer[i];
-    }
-
-    command[cmdIdx] = 0; 
-}
-
-static void newLine(){
-    write(STDOUT, "\n");
 }
