@@ -1,5 +1,15 @@
 ### Custom x86-64 Kernel
 
+The base code for this project can be found at:  
+https://github.com/alejoaquili/x64BareBones
+
+The example project includes the following components:
+- Bootloader – low-level startup code that initializes the system  
+- Image – prebuilt disk images for emulators  
+- Kernel – main operating system code  
+- Toolchain – packaging and build tools  
+- Userland – user applications that act as OS clients  
+
 Overview
 
 This project implements a **custom 64-bit operating system kernel**, bootable using **Pure64**, for **Intel x86-64 Long Mode**.  
