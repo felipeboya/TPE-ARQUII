@@ -50,8 +50,6 @@ uint64_t syscallDispatcher(uint64_t syscall_id, uint64_t arg1, uint64_t arg2, ui
             return _beep(arg1, arg2);
         case SYS_GET_TIME :
             return _getTime((timeStructPtr) arg1);
-    
-     
         case SYS_GET_TICKS:
             return _getTicks();
         case SYS_GET_CPU_INFO:

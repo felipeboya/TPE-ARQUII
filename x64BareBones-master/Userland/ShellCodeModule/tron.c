@@ -18,12 +18,13 @@ static void fillPosition(uint64_t x, uint64_t y, uint64_t color);
 static uint64_t level = 0;
 static const uint64_t levels[] = {LEVEL_0, LEVEL_1, LEVEL_2, LEVEL_3};
 static singlePlayerPoints = 0;
+static int multiplayerScores[2] = {0,0};
 
 void playTron(){
     setMode(VIDEO_MODE, 0);
     welcome();
     clearScreen();
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Leaving Tron!",3, GREEN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Leaving Tron!",3, CYAN);
     sleep(20);
     beep(100,5);
     beep(50,5);
@@ -33,25 +34,25 @@ void playTron(){
 
 void welcome(){
     clearScreen();
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Welcome to Tron!",3, GREEN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Welcome to Tron!",3, CYAN);
     sleep(20);
     playArcadeSong();
     clearScreen();
 
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-100,"Choose de game mode: (Press the corresponding key)",2, GREEN);
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"s. Single Player",2, GREEN);
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"m. Multiplayer",2, GREEN);
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"q. Exit",2, GREEN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-100,"Choose de game mode: (Press the corresponding key)",2, CYAN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"[S] Single Player",2, CYAN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"[M] Multiplayer",2, CYAN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"[Q] Exit",2, CYAN);
     char c;
     while((( c = getChar() ) != 'q' ) && (c != 'm' ) && (c != 's' )){}
     
     if (c != 'q'){
         clearScreen();
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-100,"Choose level: (Press the corresponding key)",2, GREEN);
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"0. Easy",2, GREEN);
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"1. Medium",2, GREEN);
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"2. Hard",2, GREEN);
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+100,"3. Impossible",2, GREEN);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-100,"Choose level: (Press the corresponding key)",2, CYAN);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"[0] Easy",2, CYAN);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"[1] Medium",2, CYAN);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"[2] Hard",2, CYAN);
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+100,"[3] Impossible",2, CYAN);
         
         char lev;
         while((( lev = getChar() ) != '0' ) && (lev != '1' ) && (lev != '2' ) && (lev != '3' )){}
@@ -66,22 +67,20 @@ void welcome(){
     }
     return;
 }
-
 static void singlePlayer(){
     singlePlayerPoints = 0;
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Use W-A-S-D to move",2, GREEN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Use W-A-S-D to move",2, CYAN);
     sleep(50);
     clearScreen();
-
     initializeMap();
     uint64_t p1x = PLAYER_1_INIT_X;
     uint64_t p1y = PLAYER_1_INIT_Y - 10;
     uint64_t p1_lost = 0;
-    int64_t direction[2] = {0,-1}; // al principio va haci­a arriba
+    int64_t direction[2] = {0,-1};
     uint16_t buffer[10];
     uint64_t buffer_size = 0;
 
-    fillPosition(p1x, p1y, BLUE);
+    fillPosition(p1x, p1y, CYAN);
 
     while(1){
         singlePlayerPoints++;
@@ -98,7 +97,7 @@ static void singlePlayer(){
             p1_lost = 1;
             break;
         }
-        fillPosition(p1x, p1y, BLUE);
+    fillPosition(p1x, p1y, CYAN);
 
     }
     retryMenuSingleplayer();
@@ -107,12 +106,12 @@ static void singlePlayer(){
 static void retryMenuSingleplayer(){
     clearScreen();
     printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-150,"GAME OVER",3, RED);
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"Your score was",3, BLUE);
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,numToString(singlePlayerPoints,10),2, BLUE);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"Your score was",3, CYAN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,numToString(singlePlayerPoints,10),2, CYAN);
     sleep(40);
     clearScreen();
-    printCenteredString(SCREEN_WIDTH/2-100, SCREEN_HEIGHT/2,"r. Retry",2, GREEN);
-    printCenteredString(SCREEN_WIDTH/2+100, SCREEN_HEIGHT/2,"m. Main Menu",2, GREEN);
+    printCenteredString(SCREEN_WIDTH/2-100, SCREEN_HEIGHT/2,"[R] Retry",2, CYAN);
+    printCenteredString(SCREEN_WIDTH/2+100, SCREEN_HEIGHT/2,"[M] Main Menu",2, CYAN);
 
     char c;
     while((( c = getChar() ) != 'r' ) && (c != 'm' )){}
@@ -126,38 +125,46 @@ static void retryMenuSingleplayer(){
 
 static void retryMenuMultiplayer(int whoWon, int scores[]){
     clearScreen();
-    if(whoWon == 1)
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Winner: Player 1",3, BLUE);
-    else if(whoWon == 2)
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Winner: Player 2",3, ORANGE);
-    else
-        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Draw",3, GREEN);
+    uint64_t menuColor = CYAN;
+    if (whoWon == 1) menuColor = CYAN;
+    else if (whoWon == 2) menuColor = ORANGE;
 
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 50,"Score",2, GREEN);
-    printCenteredString(SCREEN_WIDTH/2-100, SCREEN_HEIGHT/2 + 100,numToString(scores[0],10),2, GREEN);
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 100," VS ",2, GREEN);
-    printCenteredString(SCREEN_WIDTH/2+100, SCREEN_HEIGHT/2 + 100,numToString(scores[1],10),2, GREEN);
+    if(whoWon == 1)
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Winner: Player 1",3, menuColor);
+    else if(whoWon == 2)
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Winner: Player 2",3, menuColor);
+    else
+        printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2,"Draw",3, menuColor);
+
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 50,"Score",2, menuColor);
+    printCenteredString(SCREEN_WIDTH/2-100, SCREEN_HEIGHT/2 + 100,numToString(scores[0],10),2, menuColor);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 100," VS ",2, menuColor);
+    printCenteredString(SCREEN_WIDTH/2+100, SCREEN_HEIGHT/2 + 100,numToString(scores[1],10),2, menuColor);
 
     sleep(50);
     clearScreen();
-    printCenteredString(SCREEN_WIDTH/2-100, SCREEN_HEIGHT/2,"r. Retry",2, GREEN);
-    printCenteredString(SCREEN_WIDTH/2+100, SCREEN_HEIGHT/2,"m. Main Menu",2, GREEN);
+    printCenteredString(SCREEN_WIDTH/2-100, SCREEN_HEIGHT/2,"[R] Retry",2, menuColor);
+    printCenteredString(SCREEN_WIDTH/2+100, SCREEN_HEIGHT/2,"[M] Main Menu",2, menuColor);
     
     char c;
     while((( c = getChar() ) != 'r' ) && (c != 'm' )){}
     clearScreen();
     switch (c){
         case 'r': multiPlayer(); break;
-        case 'm': welcome(); break;
+        case 'm':
+            scores[0] = 0;
+            scores[1] = 0;
+            welcome();
+            break;
     }
 }
 
 static void multiPlayer(){
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"Player 1: Use W-A-S-D to move",2, BLUE);
-    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"Jugador 2: Use I-J-K-L to move",2, ORANGE);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-50,"Player 1: Use [W]-[A]-[S]-[D] to move",2, CYAN);
+    printCenteredString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,"Jugador 2: Use [I]-[J]-[K]-[L] to move",2, ORANGE);
     sleep(50);
     clearScreen();
-    static int scores[2] = {0,0}; 
+    int *scores = multiplayerScores;
     initializeMap();
     uint64_t p1x = PLAYER_1_INIT_X;
     uint64_t p1y = PLAYER_1_INIT_Y - 1;
@@ -173,8 +180,11 @@ static void multiPlayer(){
     uint16_t buffer[10];
     uint64_t buffer_size = 0;
 
-    fillPosition(p1x, p1y, BLUE);
+    fillPosition(p1x, p1y, CYAN);
     fillPosition(p2x, p2y, ORANGE);
+
+    printCenteredString(50, 20, numToString(scores[0],10), 2, CYAN);
+    printCenteredString(SCREEN_WIDTH - 50, 20, numToString(scores[1],10), 2, ORANGE);
 
     while(1){
         sleep(1);
@@ -204,8 +214,11 @@ static void multiPlayer(){
         if(p1_lost || p2_lost){
             break;
         }
-        fillPosition(p1x, p1y, BLUE);
-        fillPosition(p2x, p2y, ORANGE);
+    fillPosition(p1x, p1y, CYAN);
+    fillPosition(p2x, p2y, ORANGE);
+
+    printCenteredString(50, 20, numToString(scores[0],10), 2, CYAN);
+    printCenteredString(SCREEN_WIDTH - 50, 20, numToString(scores[1],10), 2, ORANGE);
 
     }
     if(p1_lost && p2_lost){
@@ -300,7 +313,7 @@ static void printString(uint64_t x, uint64_t y, const char * str, uint64_t font_
 }
 
 static void playArcadeSong() {
-    // Frequencies for the notes in the song.
+    // Frecuencias para las notas
     uint32_t C4 = 262;
     uint32_t D4 = 294;
     uint32_t E4 = 330;
@@ -310,11 +323,11 @@ static void playArcadeSong() {
     uint32_t B4 = 494;
     uint32_t C5 = 523;
 
-    // Duration of each note in milliseconds.
+    // Duracion de cada nota en ms
     int quarter_note = 500 / 55;
     int eighth_note = quarter_note / 3;
 
-    // Play the song.
+    // Play
     beep(C4, eighth_note);
     beep(E4, eighth_note);
     beep(G4, eighth_note);
