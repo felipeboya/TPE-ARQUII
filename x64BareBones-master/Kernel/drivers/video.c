@@ -312,19 +312,3 @@ static void printBuffer(){
         textWrite(charBuffer[i].fd, &charBuffer[i].c, 1);
     }
 }
-
-static void drawCaret(){
-    for (uint64_t row = 0; row < FONT_HEIGHT; row++){
-        for (uint64_t col = 0; col < CARET_WIDTH; col++){
-            drawRectangle(currentScreenPoint.x + col * fontSize, currentScreenPoint.y + row * fontSize, fontSize, fontSize, caretColor);
-        }
-    }
-}
-
-static void eraseCaret(){
-    for (uint64_t row = 0; row < FONT_HEIGHT; row++){
-        for (uint64_t col = 0; col < CARET_WIDTH; col++){
-            drawRectangle(currentScreenPoint.x + col * fontSize, currentScreenPoint.y + row * fontSize, fontSize, fontSize, backgroundColor);
-        }
-    }
-}
