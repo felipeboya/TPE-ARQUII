@@ -25,7 +25,6 @@ extern uint8_t fontBitmap[4096];
 static Color backgroundColor = {0,0,0}; 	// Color default del fondo
 static Color fontColor = {255,255,255};	    // Color default de la fuente
 static Color stderrColor = {255, 0,0};      
-static Color caretColor = {0, 255, 0};      //Default color del visible cursor
 static uint64_t fontSize = 1;				// Tamaño base de fuente
 static uint8_t driverMode = TEXT_MODE;      		
 static Point currentScreenPoint = {0,0};
